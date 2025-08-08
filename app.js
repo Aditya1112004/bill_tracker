@@ -16,6 +16,7 @@ app.use(express.static(publicPath));
 const ADVANCE_FILE = path.join(__dirname, "advance_payment.json");
 const SALES_FILE = path.join(__dirname, "sales.json");
 const PURCHASE_FILE = path.join(__dirname, "purchases.json");
+const SP_ANALYSIS_FILE = path.join(__dirname, "sp_analysis.json");
 
 app.set("view engine", "ejs");
 app.use(express.static("public"));
@@ -48,6 +49,15 @@ function saveAdvancePayment(advancePayment) {
     fs.writeFileSync(ADVANCE_FILE, JSON.stringify(advancePayment, null, 2));
 }
 
+function loadSpAnalysis() {
+    if (!fs.existsSync(SP_ANALYSIS_FILE)) fs.writeFileSync(SP_ANALYSIS_FILE, "[]");
+    return JSON.parse(fs.readFileSync(SP_ANALYSIS_FILE));
+}
+
+function saveSpAnalysis(spAnalysis) {
+    fs.writeFileSync(SP_ANALYSIS_FILE, JSON.stringify(spAnalysis, null, 2));
+}
+
 function daysBetweenToday(dateStr) {
   const d = new Date(dateStr);
   if (isNaN(d)) return 0;
@@ -66,9 +76,7 @@ app.get("/", (req, res) => {
 // Update all sales filters to use the same robust logic
 app.get("/sales", (req, res) => {
     let sales = loadSales();
-    // Remove entries where pending is 0
-    sales = sales.filter(entry => (Number(entry.bill_amount) - Number(entry.received) - Number(entry.tds || 0)) !== 0);
-    saveSales(sales); // Persist the filtered list
+    sales = sales.filter(entry => (Number(entry.bill_amount) - Number(entry.received) - Number(entry.tds || 0)) !== 0 && entry.status !== false);
     res.render("sales_list", { sales });
 });
 
@@ -93,19 +101,16 @@ app.post("/sales/new", (req, res) => {
         review: req.body.review,
         bill_amount,
         received,
-        tds
+        tds,
+        status: true
     });
-    // Remove entries where pending is 0
-    const filtered = sales.filter(entry => (Number(entry.bill_amount) - Number(entry.received) - Number(entry.tds || 0)) !== 0);
-    saveSales(filtered);
+    saveSales(sales);
     res.redirect("/sales/list");
 });
 
 app.get("/sales/list", (req, res) => {
     let sales = loadSales();
-    // Remove entries where pending is 0
-    sales = sales.filter(entry => (Number(entry.bill_amount) - Number(entry.received) - Number(entry.tds || 0)) !== 0);
-    saveSales(sales); // Persist the filtered list
+    sales = sales.filter(entry => (Number(entry.bill_amount) - Number(entry.received) - Number(entry.tds || 0)) !== 0 && entry.status !== false);
     res.render("sales_list", { sales });
 });
 
@@ -124,15 +129,16 @@ app.post("/sales/edit/:id", (req, res) => {
             tds: req.body.tds ? parseFloat(req.body.tds) : 0
         };
     }
-    // Remove entries where pending is 0
-    const filtered = sales.filter(entry => (Number(entry.bill_amount) - Number(entry.received) - Number(entry.tds || 0)) !== 0);
-    saveSales(filtered);
+    saveSales(sales);
     res.redirect("/sales");
 });
 
 app.post("/sales/delete/:id", (req, res) => {
     let sales = loadSales();
-    sales = sales.filter(e => e.id != req.params.id);
+    const idx = sales.findIndex(e => e.id == req.params.id);
+    if (idx !== -1) {
+        sales[idx].status = false;
+    }
     saveSales(sales);
     res.redirect("/sales");
 });
@@ -387,9 +393,8 @@ app.get("/sales/all/pdf", (req, res) => {
 
 app.get("/purchase", (req, res) => {
     let purchases = loadPurchases();
-    // Remove entries where pending is 0
-    purchases = purchases.filter(entry => (entry.credit_amt - (entry.debit_amt ? entry.debit_amt : 0)) !== 0);
-    savePurchases(purchases);
+    purchases = purchases.filter(entry => entry.status !== false);
+    // savePurchases(purchases); // Removed to prevent accidental deletion
     res.render("purchase_list", { purchases });
 });
 
@@ -404,7 +409,8 @@ app.post("/purchase/new", (req, res) => {
         invoice_no: req.body.invoice_no,
         review:req.body.review,
         debit_amt,
-        credit_amt
+        credit_amt,
+        status: true
     });
     savePurchases(purchases);
     res.redirect("/purchase");
@@ -430,7 +436,10 @@ app.post("/purchase/edit/:id", (req, res) => {
 
 app.post("/purchase/delete/:id", (req, res) => {
     let purchases = loadPurchases();
-    purchases = purchases.filter(e => e.id != req.params.id);
+    const idx = purchases.findIndex(e => e.id == req.params.id);
+    if (idx !== -1) {
+        purchases[idx].status = false;
+    }
     savePurchases(purchases);
     res.redirect("/purchase");
 });
@@ -833,6 +842,10 @@ app.get('/advance_payment/partywise/pdf', (req, res) => {
     doc.end();
 });
 
+
+app.get('/analysis',(req,res)=>{
+    res.render('analysis_sales_purchase')
+})
 
 app.listen(PORT, () => {
     console.log(`Server running on http://localhost:${PORT}`);
