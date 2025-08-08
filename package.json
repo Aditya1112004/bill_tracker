@@ -1,13 +1,13 @@
 {
-  "name": "pendingbills",
+  "name": "BillTracker",
   "version": "1.0.0",
   "main": "main.js",
-  "description": "Pending Bills",
+  "description": "Bill Tracker",
   "author": "Aditya Kumawat",
   "keywords": [
-    "pendingbills",
-    "pendingbillsapp",
-    "pendingbillsapp"
+    "BillTracker",
+    "BillTrackerapp",
+    "BillTrackerapp"
   ],
   "scripts": {
     "start": "electron .",
@@ -15,9 +15,9 @@
     "dev": "nodemon app.js"
   },
   "build": {
-    "appId": "com.pendingbill.local",
-    "productName": "PENDING BILLS",
-    "copyright": "Copyright © 2025 PENDING BILLS / Aditya Kumawat",
+    "appId": "com.billtracker.local",
+    "productName": "BILL TRACKER",
+    "copyright": "Copyright © 2025 BILL TRACKER / Aditya Kumawat",
     "icon": "public/icon.png",
     "win": {
       "target": "nsis"
