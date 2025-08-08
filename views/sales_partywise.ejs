@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Sales Partywise</title>
+  <link rel="stylesheet" href="/style.css">
+</head>
+<body>
+  <a href="/sales" style="position: absolute; left: 20px; top: 20px; text-decoration: none; font-size: 18px;">&larr; Back</a>
+  <h1>DEBTORS TOTAL RECEIVABLE</h1>
+  <% let grandTotal = 0; %>
+  <% partywiseList.forEach(row => { grandTotal += row.receivable; }); %>
+  <div style="margin-bottom: 20px; text-align: center; font-size: 22px; font-weight: bold; color: #e23c3c;">
+    Receivable Amount: <%= grandTotal.toFixed(2) %>
+  </div>
+  <div style="margin-bottom: 20px; text-align: center;">
+    <a href="/sales/partywise/pdf?preview=1" target="_blank">
+      <button type="button" style="font-size: 16px;">Preview PDF</button>
+
+    </a>
+    
+  </div>
+  <table border="1" style="border-collapse: collapse; width: 60%; margin: 40px auto 0 auto;">
+    <thead>
+      <tr>
+        <th>Debtors</th>
+        <th>Receivable</th>
+      </tr>
+    </thead>
+    <tbody>
+      <% partywiseList.sort((a, b) => b.receivable - a.receivable).forEach(row => { %>
+        <tr>
+          <td><%= row.debtors %></td>
+          <td><%= row.receivable.toFixed(2) %></td>
+        </tr>
+      <% }); %>
+    </tbody>
+    <tfoot>
+      <tr>
+        <th style="text-align:right;">Total:</th>
+        <th><%= grandTotal.toFixed(2) %></th>
+      </tr>
+    </tfoot>
+  </table>
+</body>
+</html> 

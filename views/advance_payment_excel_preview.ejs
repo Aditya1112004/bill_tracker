@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Advance Payment Excel Preview</title>
+  <link rel="stylesheet" href="/style.css">
+</head>
+<body>
+  <!-- <a href="/purchase" style="position: absolute; left: 20px; top: 20px; text-decoration: none; font-size: 18px;">&larr; Back</a> -->
+  <h1> Advance Payment Excel</h1>
+  <div style="margin-bottom: 20px; text-align: center;">
+    <a href="/advance_payment/excel/download">
+      <button style="font-size: 16px;">Download Excel</button>
+    </a>
+  </div>
+  <table border="1" style="border-collapse: collapse; width: 90%; margin: 0 auto;">
+    <thead>
+      <tr>
+        <th>Party Name</th>
+        <th>Date</th>
+        <th>Advance Received</th>
+        <th>Advance Paid</th>
+        <th>Remark</th>
+      </tr>
+    </thead>
+    <tbody>
+      <% function daysBetweenToday(dateStr) {
+  const d = new Date(dateStr);
+  if (isNaN(d)) return '-';
+  const today = new Date();
+  today.setHours(0,0,0,0);
+  d.setHours(0,0,0,0);
+  return Math.floor((today - d) / (1000 * 60 * 60 * 24));
+} %>
+      <% advancePayment.sort((a, b) => new Date(b.date) - new Date(a.date)).reverse().forEach(entry => { %>
+        <tr>
+          <td><%= entry.debtors %></td>
+          <td><%= entry.date %></td>
+        <td><%= entry.bill_amount %></td>
+        <td><%= entry.paid_amount %></td>
+        <td><%= entry.review %></td>
+        </tr>
+      <% }); %>
+     
+    </tbody>
+  </table>
+</body>
+</html> 

@@ -1,0 +1,26 @@
+[
+  {
+    "id": 1753364344191,
+    "debtors": "adi",
+    "date": "2022-01-14",
+    "bill_amount": 5006,
+    "paid_amount": 0,
+    "review": "-"
+  },
+  {
+    "id": 1753371599831,
+    "debtors": "anil",
+    "date": "2023-05-11",
+    "bill_amount": 10000,
+    "paid_amount": 0,
+    "review": "-"
+  },
+  {
+    "id": 1753373571841,
+    "debtors": "payal",
+    "date": "2025-02-24",
+    "bill_amount": 12334,
+    "paid_amount": 0,
+    "review": "-"
+  }
+]

@@ -1,0 +1,235 @@
+<% const uniqueCreditors = [...new Set(purchases.map(entry => entry.creditors))]; %>
+<%
+function parseDMY(dateStr) {
+  if (!dateStr) return new Date('Invalid');
+  if (typeof dateStr === 'number') return new Date((dateStr - 25569) * 86400 * 1000); // Excel serial
+  if (dateStr.includes('-')) {
+    const [dd, mm, yyyy] = dateStr.split('-');
+    return new Date(`${yyyy}-${mm}-${dd}`);
+  }
+  return new Date(dateStr);
+}
+function daysBetweenToday(dateStr) {
+  const d = new Date(dateStr);
+  if (isNaN(d)) return '-';
+  const today = new Date();
+  today.setHours(0,0,0,0);
+  d.setHours(0,0,0,0);
+  return Math.floor((today - d) / (1000 * 60 * 60 * 24));
+}
+let totalDebit = 0, totalCredit = 0, totalPending = 0;
+purchases.sort((a, b) => parseDMY(a.date) - parseDMY(b.date)).forEach(entry => {
+  const debit = Number(entry.debit_amt) || 0;
+  const credit = Number(entry.credit_amt) || 0;
+  totalDebit += debit;
+  totalCredit += credit;
+  totalPending += (credit - debit);
+}); %>
+<!DOCTYPE html>
+<html>
+<head>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Purchase Payment Pending</title>
+  <link rel="stylesheet" href="/style.css">
+  <script>
+    function filterTable() {
+      var input = document.getElementById('searchInput');
+      var filter = input.value.toLowerCase();
+      var table = document.getElementById('purchaseTable');
+      var trs = table.getElementsByTagName('tr');
+      for (var i = 1; i < trs.length; i++) {
+        var td = trs[i].getElementsByTagName('td')[0];
+        if (td) {
+          var txtValue = td.textContent || td.innerText;
+          trs[i].style.display = txtValue.toLowerCase().indexOf(filter) > -1 ? '' : 'none';
+        }
+      }
+      updateTotalsDisplay(); // Call update after filtering
+    }
+    function toggleEditForm(id) {
+      var form = document.getElementById('edit-form-' + id);
+      form.style.display = form.style.display === 'none' ? 'table-row' : 'none';
+    }
+    function closeEditForm(id) {
+      var form = document.getElementById('edit-form-' + id);
+      form.style.display = 'none';
+    }
+    // function toggleNewEntryForm() {
+    //   var form = document.getElementById('new-entry-form');
+    //   form.style.display = form.style.display === 'none' ? 'block' : 'none';
+    // }
+    function showDayFilterMenu() {
+      var menu = document.getElementById('dayFilterMenu');
+      menu.style.display = menu.style.display === 'block' ? 'none' : 'block';
+    }
+    function filterByDays(range) {
+      var table = document.getElementById('purchaseTable');
+      var trs = table.getElementsByTagName('tr');
+      for (var i = 1; i < trs.length; i++) {
+        var td = trs[i].getElementsByTagName('td')[5]; // Days column
+        if (td) {
+          var val = parseInt(td.textContent || td.innerText);
+          var show = false;
+          if (range === '0-25' && val >= 0 && val <= 25) show = true;
+          if (range === '26-30' && val >= 26 && val <= 30) show = true;
+          if (range === 'above30' && val > 30) show = true;
+          trs[i].style.display = show ? '' : 'none';
+        }
+      }
+      document.getElementById('dayFilterMenu').style.display = 'none';
+      updateTotalsDisplay(); // Call update after filtering
+    }
+    function clearDayFilter() {
+      var table = document.getElementById('purchaseTable');
+      var trs = table.getElementsByTagName('tr');
+      for (var i = 1; i < trs.length; i++) {
+        trs[i].style.display = '';
+      }
+      document.getElementById('dayFilterMenu').style.display = 'none';
+      updateTotalsDisplay(); // Call update after clearing filter
+    }
+
+    function updateTotalsDisplay() {
+      let currentTotalDebit = 0;
+      let currentTotalCredit = 0;
+      let currentTotalPending = 0;
+
+      var table = document.getElementById('purchaseTable');
+      var trs = table.getElementsByTagName('tr');
+      for (var i = 1; i < trs.length; i++) { // Skip header row
+        if (trs[i].style.display !== 'none') { // Only process visible rows
+          // Assuming column order: Creditors, Date, Invoice No., Remark, Credit Amount, Debit Note, Days, Pending
+          const creditAmount = parseFloat(trs[i].getElementsByTagName('td')[4].innerText) || 0; // Credit Amount
+          const debitAmount = parseFloat(trs[i].getElementsByTagName('td')[5].innerText) || 0;  // Debit Note
+
+          currentTotalDebit += debitAmount;
+          currentTotalCredit += creditAmount;
+          currentTotalPending += (creditAmount - debitAmount);
+        }
+      }
+      // Update the display elements
+      document.getElementById('totalDebitDisplay').innerText = currentTotalDebit.toFixed(2);
+      document.getElementById('totalCreditDisplay').innerText = currentTotalCredit.toFixed(2);
+      document.getElementById('totalPendingDisplay').innerText = currentTotalPending.toFixed(2);
+    }
+
+    // Call updateTotalsDisplay on page load to set initial totals based on visible rows
+    window.onload = updateTotalsDisplay;
+  </script>
+</head>
+<body>
+  <a href="/" style="position: absolute; left: 20px; top: 10px; text-decoration: none; font-size: 18px;">&larr; Back</a>
+   
+  
+  <button onclick="window.location.reload()" title="Reload" style="position: absolute; right: 30px; top: 18px; background: #fff; border: none; border-radius: 50%; box-shadow: 0 2px 8px rgba(34,34,59,0.10); width: 38px; height: 38px; cursor: pointer; display: flex; align-items: center; justify-content: center; font-size: 20px; color: #3a86ff; transition: background 0.2s;">&#x21bb;</button>
+  <h1>Purchase Payment Pending</h1>
+  <div style="display: flex; gap: 10px; margin-bottom: 15px; align-items: center;">
+    <!-- <button class="new-entry-btn" style="font-size: 16px;" onclick="toggleNewEntryForm()">+ New Entry</button> -->
+    <a href="/purchase/partywise" target="_blank"><button style="font-size: 16px;">Creditors Total Payable</button></a>
+    <a href="/purchase/excel/preview" target="_blank"><button style="font-size: 16px;" class="excel-btn">Download Excel</button></a>
+    <a href="/purchase/all/pdf" target="_blank"><button class="excel-btn" style="font-size: 16px;">Download PDF</button></a>
+    
+    <input id="searchInput" list="search-creditors-list" placeholder="Search by Creditor" style="font-size: 16px; padding: 4px;" />
+    <datalist id="search-creditors-list">
+      <% uniqueCreditors.forEach(creditor => { %>
+        <option value="<%= creditor %>"></option>
+      <% }); %>
+    </datalist>
+    <button onclick="filterTable()" style="font-size: 16px;">Search</button>
+  </div>
+  <div id="new-entry-form" style="display:block; margin-bottom: 15px; background: #fff; border-radius: 12px; box-shadow: 0 2px 8px rgba(34,34,59,0.08); padding: 12px 16px; max-width: 1000px; margin-left:auto; margin-right:auto;">
+    <form action="/purchase/new" method="post" style="display: flex; flex-wrap: wrap; gap: 16px; align-items: center; justify-content: center;">
+      <input name="creditors" list="creditors-list" placeholder="Creditors" required style="flex:1; min-width:120px;">
+      <datalist id="creditors-list">
+        <% uniqueCreditors.forEach(creditor => { %>
+          <option value="<%= creditor %>"></option>
+        <% }); %>
+      </datalist>
+      <input name="date" type="date" required style="flex:1; min-width:120px;">
+      <input name="invoice_no" placeholder="Invoice No." required style="flex:1; min-width:120px;">
+      <input name="credit_amt" type="number" step="0.01" placeholder="Credit Amount" required style="flex:1; min-width:120px;">
+      <input name="debit_amt" type="number" step="0.01" placeholder="Debit Amount (default 0)" style="flex:1; min-width:120px;">
+      <input name="review"  placeholder="Remark"  style="flex:1; min-width:120px;">
+      <button class="new-entry-btn" type="submit" style="width: 70px; height: 30px; font-size: 16px; padding: 0px;"> Save </button>
+      <!-- <button type="button" onclick="toggleNewEntryForm()">Cancel</button> -->
+    </form>
+  </div>
+  <div style="width:90%;margin:0 auto;">
+    <!-- space-between -->
+    <div style="background:#e7f0fd; font-weight:bold; border-radius:8px; display:flex; justify-content:right; align-items:center; padding:10px 20px; margin-bottom:4px;">
+      <span>Total Debit: <span id="totalDebitDisplay"><%= totalDebit.toFixed(2) %></span></span>
+      <span style="margin: 0 10px ;"></span>
+      <span>Total Credit: <span id="totalCreditDisplay"><%= totalCredit.toFixed(2) %></span></span>
+      <span style="margin: 0 10px ;"></span>
+      <span style="background-color: rgb(234, 60, 60); color: #fff; padding: 4px 8px; border-radius: 4px;">Total Payable: <span id="totalPendingDisplay"><%= totalPending.toFixed(2) %></span></span>
+    </div>
+  </div>
+  <table id="purchaseTable" border="1" style="border-collapse: collapse; width: 90%; margin: 0 auto;">
+    <thead>
+      <tr>
+        <th>Creditors</th>
+        <th>Date</th>
+        <th>Invoice No.</th>
+        <th>Remark</th>
+        <th>Credit Amount</th>
+        <th>Debit Note</th>
+        <th>Days</th>
+        <th>Payable</th>
+        <th>Actions
+          <span style="cursor:pointer; margin-left:6px; position:relative;" onclick="showDayFilterMenu()">&#x1F50D;
+            <div id="dayFilterMenu" style="width:150px; display:none; position:absolute; top:22px; right:0; background:#fff; border:1px solid #ccc; border-radius:6px; box-shadow:0 2px 8px rgba(0,0,0,0.08); z-index:10;">
+              <div style="padding:8px; cursor:pointer;color: #000;border: 1px solid #ccc;" onclick="filterByDays('0-25')">0-25 days</div>
+              <div style="padding:8px; cursor:pointer;color: #000;border: 1px solid #ccc;" onclick="filterByDays('26-30')">26-30 days</div>
+              <div style="padding:8px; cursor:pointer;color: #000;border: 1px solid #ccc;" onclick="filterByDays('above30')">Above 30 days</div>
+            </div>
+          </span>
+        </th>
+      </tr>
+    </thead>
+    <!-- <tfoot>
+      <tr style="background:#e7f0fd; font-weight: bold;">
+        <td colspan="3" style="text-align:right;">Total:</td>
+        <td><%= totalDebit.toFixed(2) %></td>
+        <td><%= totalCredit.toFixed(2) %></td>
+        <td></td>
+        <td><%= totalPending.toFixed(2) %></td>
+        <td></td>
+      </tr>
+    </tfoot> -->
+    <tbody>
+      <% purchases.sort((a, b) => daysBetweenToday(b.date) - daysBetweenToday(a.date)).forEach(entry => { %>
+        <tr>
+          <td><%= entry.creditors %></td>
+          <td><%= entry.date %></td>
+          <td><%= entry.invoice_no %></td>
+          <td><%= entry.review %></td>          
+          <td><%= (entry.credit_amt).toFixed(1) %></td>
+          <td><%= entry.debit_amt ? entry.debit_amt : 0 %></td>
+          <td><%= daysBetweenToday(entry.date) %></td>
+          <td><%= (entry.credit_amt - (entry.debit_amt ? entry.debit_amt : 0)).toFixed(2) %></td>
+          <td>
+            <button type="button" onclick="toggleEditForm(<%= entry.id %>)" style="font-size: 10px; margin: 0;padding: 5px;">Edit</button>
+            <form action="/purchase/delete/<%= entry.id %>" method="POST" style="display:inline;">
+              <button class="delete-btn" type="submit" onclick="return confirm('Are you sure you want to delete this entry?');" style="font-size: 10px; margin: 0;padding: 5px;">Delete</button>
+            </form>
+          </td>
+        </tr>
+        <tr id="edit-form-<%= entry.id %>" style="display:none; background:#f4f6fb;">
+          <td colspan="8">
+            <form action="/purchase/edit/<%= entry.id %>" method="post" style="display: flex; flex-wrap: wrap; gap: 16px; align-items: center; justify-content: center;">
+              <input name="creditors" value="<%= entry.creditors %>" required style="flex:1; min-width:120px;">
+              <input name="date" type="date" value="<%= entry.date %>" required style="flex:1; min-width:120px;">
+              <input name="invoice_no" value="<%= entry.invoice_no %>" required style="flex:1; min-width:120px;">
+              <input name="review" value="<%= entry.review %>"  style="flex:1; min-width:120px;">
+              <input name="credit_amt" type="number" step="0.01" value="<%= entry.credit_amt %>" required style="flex:1; min-width:120px;">
+              <input name="debit_amt" type="number" step="0.01" value="<%= entry.debit_amt ? entry.debit_amt : 0 %>" placeholder="Debit Amount" style="flex:1; min-width:120px;">
+              <button class="new-entry-btn" type="submit">Save</button>
+              <button type="button" onclick="closeEditForm(<%= entry.id %>)">Cancel</button>
+            </form>
+          </td>
+        </tr>
+      <% }); %>
+    </tbody>
+  </table>
+</body>
+</html> 

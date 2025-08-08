@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Purchase Partywise</title>
+  <link rel="stylesheet" href="/style.css">
+</head>
+<body>
+  <!-- <a href="/purchase" style="position: absolute; left: 20px; top: 20px; text-decoration: none; font-size: 18px;">&larr; Back</a> -->
+  <h1>Creditors Total Payable</h1>
+  <div style="margin-bottom: 20px; text-align: center;">
+    <a href="/purchase/partywise/pdf?preview=1" target="_blank">
+      <button type="button" style="font-size: 16px;">Preview PDF</button>
+    </a>
+    <!-- <a href="/purchase/partywise/pdf">
+      <button type="button" style="font-size: 16px;">Download PDF</button>
+    </a> -->
+  </div>
+  <table border="1" style="border-collapse: collapse; width: 60%; margin: 40px auto 0 auto;">
+    <thead>
+      <tr>
+        <th>Creditors</th>
+        <th>Payable</th>
+      </tr>
+    </thead>
+    <tbody>
+      <% let grandTotal = 0, grandCredit = 0; %>
+      <% partywiseList.forEach(row => { grandTotal += row.payable; grandCredit += row.credit_amt; %>
+        <tr>
+          <td><%= row.creditors %></td>
+          <td><%= row.payable.toFixed(2) %></td>
+        </tr>
+      <% }); %>
+    </tbody>
+    <tfoot>
+      <tr>
+        <th style="text-align:right;">Total:</th>
+        <th><%= grandTotal.toFixed(2) %></th>
+      </tr>
+    </tfoot>
+  </table>
+</body>
+</html> 
