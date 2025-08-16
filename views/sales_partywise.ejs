@@ -4,6 +4,11 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Sales Partywise</title>
   <link rel="stylesheet" href="/style.css">
+  <style>
+    #s_p_tr td{
+      font-size: 12px;
+    }
+  </style>
 </head>
 <body>
   <a href="/sales" style="position: absolute; left: 20px; top: 20px; text-decoration: none; font-size: 18px;">&larr; Back</a>
@@ -22,14 +27,14 @@
   </div>
   <table border="1" style="border-collapse: collapse; width: 60%; margin: 40px auto 0 auto;">
     <thead>
-      <tr>
-        <th>Debtors</th>
+      <tr >
+        <th s>Debtors</th>
         <th>Receivable</th>
       </tr>
     </thead>
     <tbody>
       <% partywiseList.sort((a, b) => b.receivable - a.receivable).forEach(row => { %>
-        <tr>
+        <tr id="s_p_tr">
           <td><%= row.debtors %></td>
           <td><%= row.receivable.toFixed(2) %></td>
         </tr>

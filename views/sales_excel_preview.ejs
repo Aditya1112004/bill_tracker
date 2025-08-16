@@ -20,12 +20,12 @@
         <th>Debtors</th>
         <th>Date</th>
         <th>Invoice No.</th>
-        <th>Review</th>
         <th>Bill Amount</th>
         <th>Credit Day</th>
         <th>Received</th>
         <th>TDS</th>
         <th>Pending</th>
+        <th>Remark</th>
       </tr>
     </thead>
     <tbody>
@@ -37,17 +37,17 @@
   d.setHours(0,0,0,0);
   return Math.floor((today - d) / (1000 * 60 * 60 * 24));
 } %>
-      <% sales.sort((a, b) => new Date(a.date) - new Date(b.date)).reverse().forEach(entry => { %>
+      <% sales.sort((a, b) => new Date(a.date) - new Date(b.date)).forEach(entry => { %>
         <tr>
           <td><%= entry.debtors %></td>
           <td><%= entry.date %></td>
           <td><%= entry.invoice_no %></td>
-          <td><%= entry.review %></td>
           <td><%= entry.bill_amount %></td>
           <td><%= daysBetweenToday(entry.date) %></td>
           <td><%= entry.received %></td>
           <td><%= entry.tds ? entry.tds : 0 %></td>
           <td><%= ((entry.bill_amount - entry.received) - (entry.tds ? entry.tds : 0)).toFixed(2) %></td>
+          <td><%= entry.review %></td>
         </tr>
       <% }); %>
       

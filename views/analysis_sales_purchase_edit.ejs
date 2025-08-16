@@ -1,0 +1,137 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Edit Sales-Purchase Analysis</title>
+    <link rel="stylesheet" href="/style.css">
+    <style>
+        body { font-family: Arial, sans-serif; margin: 20px; background-color: #f4f4f4; color: #333; }
+        .container { max-width: 800px; margin: auto; background: #fff; padding: 20px; border-radius: 8px; box-shadow: 0 2px 4px rgba(0,0,0,0.1); }
+        h1 { color: #4361ee; }
+        .form-section { margin-bottom: 30px; padding: 15px; border: 1px solid #ddd; border-radius: 5px; background-color: #f9f9f9; }
+        .form-group { margin-bottom: 15px; }
+        .form-group label { display: block; margin-bottom: 5px; font-weight: bold; }
+        .form-group select,
+        .form-group input[type="number"] {
+            width: calc(100% - 22px);
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+        }
+        .form-group button {
+            padding: 10px 15px;
+            background-color: #4361ee;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 16px;
+        }
+        .form-group button:hover {
+            background-color: #3650d9;
+        }
+        .add-purchase-btn { margin-left: 10px; background-color: #28a745 !important; }
+        .add-purchase-btn:hover { background-color: #218838 !important; }
+        .home-button {
+            display: inline-block;
+            padding: 10px 20px;
+            background-color: #6c757d;
+            color: white;
+            text-decoration: none;
+            border-radius: 5px;
+            margin-bottom: 20px;
+        }
+        .home-button:hover {
+            background-color: #5a6268;
+        }
+        .purchase-input-row { display:flex; align-items:center; gap:8px; margin-top:8px; }
+        .remove-purchase-btn {
+            background: linear-gradient(90deg, #ff4d4f 0%, #d71e3d 100%);
+            color:#fff; border:none; border-radius:6px; cursor:pointer; padding:6px 10px; font-weight:700; line-height:1;
+            box-shadow: 0 2px 8px rgba(58,134,255,0.08);
+        }
+        .remove-purchase-btn:hover { background: linear-gradient(90deg, #d21837 0%, #ff4d4f 100%); }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <a href="/analysis" class="home-button">Back to Analysis List</a>
+        <h1>Edit Sales-Purchase Analysis</h1>
+
+        <div class="form-section">
+            <form action="/analysis/edit/<%= entryToEdit.id %>" method="POST">
+                <div class="form-group">
+                    <label for="sales_id">Select Sales ID:</label>
+                    <select id="sales_id" name="sales_id" required>
+                        <option value="">--Select Sales ID--</option>
+                        <% sales.forEach(sale => { %>
+                            <option value="<%= sale.id %>" <%= String(sale.id) === String(entryToEdit.salesEntry.id) ? 'selected' : '' %>>
+                                <%= sale.id %> - <%= sale.debtors %> (Bill: <%= sale.bill_amount %>, Received: <%= sale.received %>)
+                            </option>
+                        <% }); %>
+                    </select>
+                </div>
+                <div id="purchase-inputs" class="form-group purchase-inputs">
+                    <label>Add Purchase IDs:</label>
+                    <% if (entryToEdit.purchaseEntries && entryToEdit.purchaseEntries.length > 0) { %>
+                        <% entryToEdit.purchaseEntries.forEach(purchaseEntry => { %>
+                            <div class="purchase-input-row">
+                                <select name="purchase_ids" required>
+                                    <option value="">--Select Purchase ID--</option>
+                                    <% purchases.forEach(purchase => { %>
+                                        <option value="<%= purchase.id %>" <%= String(purchase.id) === String(purchaseEntry.id) ? 'selected' : '' %>>
+                                            <%= purchase.id %> - <%= purchase.creditors %> (Credit: <%= purchase.credit_amt %>)
+                                        </option>
+                                    <% }); %>
+                                </select>
+                                <button type="button" class="remove-purchase-btn" onclick="removePurchaseInput(this)">×</button>
+                            </div>
+                        <% }); %>
+                    <% } else { %>
+                        <div class="purchase-input-row">
+                            <select name="purchase_ids" required>
+                                <option value="">--Select Purchase ID--</option>
+                                <% purchases.forEach(purchase => { %>
+                                    <option value="<%= purchase.id %>">
+                                        <%= purchase.id %> - <%= purchase.creditors %> (Credit: <%= purchase.credit_amt %>)
+                                    </option>
+                                <% }); %>
+                            </select>
+                            <button type="button" class="remove-purchase-btn" onclick="removePurchaseInput(this)">×</button>
+                        </div>
+                    <% } %>
+                </div>
+                <button type="button" class="add-purchase-btn" onclick="addPurchaseInput()">Add Another Purchase ID</button>
+                <div class="form-group">
+                    <button type="submit">Update Analysis</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <script>
+        function addPurchaseInput() {
+            const container = document.getElementById('purchase-inputs');
+            const firstRow = container.querySelector('.purchase-input-row');
+            const newRow = firstRow.cloneNode(true);
+            const select = newRow.querySelector('select');
+            if (select) select.selectedIndex = 0;
+            container.appendChild(newRow);
+        }
+
+        function removePurchaseInput(btn) {
+            const container = document.getElementById('purchase-inputs');
+            const rows = container.querySelectorAll('.purchase-input-row');
+            if (rows.length <= 1) {
+                const select = rows[0].querySelector('select');
+                if (select) select.selectedIndex = 0;
+                return;
+            }
+            const row = btn.closest('.purchase-input-row');
+            if (row) row.remove();
+        }
+    </script>
+</body>
+</html>
+

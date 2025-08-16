@@ -1,6 +1,6 @@
 {
   "name": "BillTracker",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "main": "main.js",
   "description": "Bill Tracker",
   "author": "Aditya Kumawat",
@@ -39,6 +39,10 @@
     "app.js",
     "main.js",
     "public/**/*",
-    "views/**/*"
+    "views/**/*",
+    "sales.json",
+    "purchases.json",
+    "advance_payment.json",
+    "sp_analysis.json"
   ]
 }

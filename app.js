@@ -67,6 +67,45 @@ function daysBetweenToday(dateStr) {
   return Math.floor((d - today) / (1000 * 60 * 60 * 24));
 }
 
+function getNextId(prefix, data) {
+    let maxNum = 0;
+    data.forEach(entry => {
+        const id = String(entry.id);
+        if (id.startsWith(prefix)) {
+            const num = parseInt(id.substring(prefix.length), 10);
+            if (!isNaN(num) && num > maxNum) {
+                maxNum = num;
+            }
+        }
+    });
+    return `${prefix}${maxNum + 1}`;
+}
+
+function cleanupAnalysisData() {
+    const spAnalysis = loadSpAnalysis();
+    let changed = false;
+    
+    spAnalysis.forEach(entry => {
+        // If status is undefined, null, or any falsy value except false, set it to true
+        if (entry.status === undefined || entry.status === null || entry.status === '') {
+            entry.status = true;
+            changed = true;
+        }
+        // If status is 'false' or '0', convert to boolean false
+        if (entry.status === 'false' || entry.status === '0') {
+            entry.status = false;
+            changed = true;
+        }
+    });
+    
+    if (changed) {
+        saveSpAnalysis(spAnalysis);
+        // console.log('Analysis data cleaned up');
+    }
+    
+    return spAnalysis;
+}
+
 // Routes
 app.get("/", (req, res) => {
     res.render("index");
@@ -94,7 +133,7 @@ app.post("/sales/new", (req, res) => {
     const bill_amount = parseFloat(req.body.bill_amount);
     const tds = req.body.tds ? parseFloat(req.body.tds) : 0;
     sales.push({
-        id: Date.now(),
+        id: getNextId("s-", sales),
         debtors: req.body.debtors,
         date: req.body.date,
         invoice_no: req.body.invoice_no,
@@ -145,8 +184,12 @@ app.post("/sales/delete/:id", (req, res) => {
 
 app.get("/sales/partywise", (req, res) => {
     const sales = loadSales();
+    
+    // Filter to only include entries with status=true
+    const activeSales = sales.filter(entry => entry.status !== false);
+    
     const partywise = {};
-    sales.forEach(entry => {
+    activeSales.forEach(entry => {
         const pending = entry.bill_amount - entry.received - (entry.tds ? entry.tds : 0);
         if (!partywise[entry.debtors]) {
             partywise[entry.debtors] = 0;
@@ -159,9 +202,12 @@ app.get("/sales/partywise", (req, res) => {
 
 app.get("/sales/partywise/pdf", (req, res) => {
     const sales = loadSales();
+    
+    // Filter to only include entries with status=true
+    const activeSales = sales.filter(entry => entry.status !== false);
 
     const partywiseMap = new Map();
-    sales.forEach(sale => {
+    activeSales.forEach(sale => {
         const debtor = sale.debtors;
         if (!partywiseMap.has(debtor)) {
             partywiseMap.set(debtor, {
@@ -234,11 +280,19 @@ app.get("/sales/partywise/pdf", (req, res) => {
 
 app.get('/sales/excel/preview', (req, res) => {
     const sales = loadSales();
-    res.render('sales_excel_preview', { sales });
+    
+    // Filter to only include entries with status=true
+    const activeSales = sales.filter(entry => entry.status !== false);
+    
+    res.render('sales_excel_preview', { sales: activeSales });
 });
 
 app.get('/sales/excel/download', async (req, res) => {
     const sales = loadSales();
+    
+    // Filter to only include entries with status=true
+    const activeSales = sales.filter(entry => entry.status !== false);
+    
     const workbook = new ExcelJS.Workbook();
     const worksheet = workbook.addWorksheet('Sales Payment Pending');
     worksheet.columns = [
@@ -252,7 +306,7 @@ app.get('/sales/excel/download', async (req, res) => {
         { header: 'TDS', key: 'tds', width: 10 },
         { header: 'Pending', key: 'pending', width: 12 }
     ];
-    sales.sort((a, b) => new Date(a.date) - new Date(b.date)).forEach(entry => {
+    activeSales.sort((a, b) => new Date(a.date) - new Date(b.date)).forEach(entry => {
         worksheet.addRow({
             debtors: entry.debtors,
             date: entry.date,
@@ -279,20 +333,34 @@ app.get('/sales/excel/download', async (req, res) => {
 
 app.get('/sales/all/preview', (req, res) => {
     const sales = loadSales();
-    res.render('sales_all_pdf', { sales });
+    
+    // Filter to only include entries with status=true
+    const activeSales = sales.filter(entry => entry.status !== false);
+    
+    res.render('sales_all_pdf', { sales: activeSales });
 });
-
 
 app.get("/sales/all/pdf", (req, res) => {
     const sales = loadSales();
+    
+    // Filter to only include entries with status=true
+    const activeSales = sales.filter(entry => entry.status !== false);
 
-    // Calculate credit_day for each sale entry
-    sales.forEach(entry => {
+    // Calculate credit_day and pending for each sale entry
+    activeSales.forEach(entry => {
+        // Calculate the number of days the credit has been pending
         entry.credit_day = Math.abs(daysBetweenToday(entry.date));
+        
+        // Calculate the pending amount
+        const received = Number(entry.received) || 0;
+        const tds = Number(entry.tds) || 0;
+        const billAmount = Number(entry.bill_amount) || 0;
+        
+        entry.pending = (billAmount - received - tds).toFixed(2);
     });
     
     // Sort sales by credit_day from most to least
-    sales.sort((a, b) => b.credit_day - a.credit_day);
+    activeSales.sort((a, b) => b.credit_day - a.credit_day);
 
     const doc = new PDFDocument({ layout: 'landscape', margin: 30 });
     doc.pipe(res);
@@ -309,15 +377,14 @@ app.get("/sales/all/pdf", (req, res) => {
 
     const tableHeaders = [
         { label: 'Debtor', property: 'debtors', width: 190, align: 'left' },
-        { label: 'Date', property: 'date', width: 70, align: 'left' },
-        { label: 'Invoice No', property: 'invoice_no', width: 60, align: 'left' },
-        { label: 'Credit Day', property: 'credit_day', width: 60, align: 'right' },
-        { label: 'Bill Amount', property: 'bill_amount', width: 90, align: 'right' },
-        { label: 'Received', property: 'received', width: 90, align: 'right' },
-        { label: 'TDS', property: 'tds', width: 60, align: 'right' },
-        { label: 'Remark', property: 'review', width: 110, align: 'center' },
-        // { label: 'ID', property: 'id', width: 100, align: 'left' },
-        
+        { label: 'Date', property: 'date', width: 60, align: 'left' },
+        { label: 'Invoice No', property: 'invoice_no', width: 70, align: 'left' },
+        { label: 'Cr Day', property: 'credit_day', width: 30, align: 'right' },
+        { label: 'Bill Amt', property: 'bill_amount', width: 70, align: 'right' },
+        { label: 'Received', property: 'received', width: 70, align: 'right' },
+        { label: 'TDS', property: 'tds', width: 50, align: 'right' },
+        { label: 'Pending', property: 'pending', width: 70, align: 'right' }, // Aligning to the right for numbers
+        { label: 'Remark', property: 'review', width: 80, align: 'center' },
     ];
 
     function drawAllSalesHeader() {
@@ -342,7 +409,7 @@ app.get("/sales/all/pdf", (req, res) => {
     const bottomMargin = 60;
     const startX = 30; // Starting X for the first column
 
-    sales.forEach((row, i) => {
+    activeSales.forEach((row, i) => {
         let rowHeight = minRowHeight;
         let currentX = startX;
 
@@ -370,26 +437,143 @@ app.get("/sales/all/pdf", (req, res) => {
         y += rowHeight;
     });
 
-    const totalBillAmount = sales.reduce((sum, row) => sum + (row.bill_amount || 0), 0);
-    const totalReceived = sales.reduce((sum, row) => sum + (row.received || 0), 0);
-    const totalTDS = sales.reduce((sum, row) => sum + (row.tds || 0), 0);
+    const totalBillAmount = activeSales.reduce((sum, row) => sum + (Number(row.bill_amount) || 0), 0);
+    const totalReceived = activeSales.reduce((sum, row) => sum + (Number(row.received) || 0), 0);
+    const totalTDS = activeSales.reduce((sum, row) => sum + (Number(row.tds) || 0), 0);
+    const totalPending = activeSales.reduce((sum, row) => sum + (Number(row.pending) || 0), 0);
 
     doc.rect(startX, y, doc.page.width - 2 * startX, 30).fill('#4361ee');
     doc.fillColor('#fff').fontSize(12).font('Helvetica-Bold');
 
     let totalX = startX;
-    doc.text('Total', totalX + 10, y + 8, { width: tableHeaders[0].width, align: 'left' });
-    totalX += tableHeaders[0].width + tableHeaders[1].width + tableHeaders[2].width;
+    doc.text('Total', totalX + 10, y + 8, { width: tableHeaders[0].width, align: 'left' }).fontSize(10);
+    totalX += tableHeaders[0].width + tableHeaders[1].width + tableHeaders[2].width + tableHeaders[3].width;
 
-    doc.text(totalBillAmount.toFixed(2), totalX + 60, y + 8, { width: tableHeaders[4].width, align: 'right' });
-    totalX += tableHeaders[3].width;
-    doc.text(totalReceived.toFixed(2), totalX + 90, y + 8, { width: tableHeaders[5].width, align: 'right' });
-    totalX += tableHeaders[4].width;
-    doc.text(totalTDS.toFixed(2), totalX + 90, y + 8, { width: tableHeaders[6].width, align: 'right' });
+    doc.text(totalBillAmount.toFixed(1), totalX + 0, y + 8, { width: tableHeaders[4].width, align: 'right' }).fontSize(10);
+    totalX += tableHeaders[4].width; // Adjusted width for total calculation
+    doc.text(totalReceived.toFixed(1), totalX + 0, y + 8, { width: tableHeaders[5].width, align: 'right' }).fontSize(10); // Adjusted position
+    totalX += tableHeaders[5].width;
+    doc.text(totalTDS.toFixed(1), totalX + 0, y + 8, { width: tableHeaders[6].width, align: 'right' }).fontSize(10); // Adjusted position
+    totalX += tableHeaders[6].width;
+    doc.text(totalPending.toFixed(1), totalX + 0, y + 8, { width: tableHeaders[7].width, align: 'right' }).fontSize(10); // Adjusted position
 
     doc.fillColor('#888').fontSize(10).text(`Generated on: ${new Date().toLocaleString()}`, 0, doc.page.height - 40, { align: 'center', width: doc.page.width });
     doc.end();
 });
+
+// app.get("/sales/all/pdf", (req, res) => {
+//     const sales = loadSales();
+    
+//     // Filter to only include entries with status=true
+//     const activeSales = sales.filter(entry => entry.status !== false);
+
+//     // Calculate credit_day for each sale entry
+//     activeSales.forEach(entry => {
+//         entry.credit_day = Math.abs(daysBetweenToday(entry.date));
+//     });
+    
+//     // Sort sales by credit_day from most to least
+//     activeSales.sort((a, b) => b.credit_day - a.credit_day);
+
+//     const doc = new PDFDocument({ layout: 'landscape', margin: 30 });
+//     doc.pipe(res);
+
+//     function loadSales() {
+//         try {
+//             const data = fs.readFileSync(path.join(__dirname, "sales.json"), "utf8");
+//             return JSON.parse(data);
+//         } catch (error) {
+//             console.error("Error loading sales data:", error);
+//             return [];
+//         }
+//     }
+
+//     // property: ((Number(entry.bill_amount) - Number(entry.received)) - (Number(entry.tds) ? Number(entry.tds) : 0)).toFixed(2)
+
+//     const tableHeaders = [
+//         { label: 'Debtor', property: 'debtors', width: 190, align: 'left' },
+//         { label: 'Date', property: 'date', width: 60, align: 'left' },
+//         { label: 'Invoice No', property: 'invoice_no', width: 60, align: 'left' },
+//         { label: 'Cr Day', property: 'credit_day', width: 30, align: 'right' },
+//         { label: 'Bill Amt', property: 'bill_amount', width: 70, align: 'right' },
+//         { label: 'Received', property: 'received', width: 70, align: 'right' },
+//         { label: 'TDS', property: 'tds', width: 50, align: 'right' },
+//         { label: 'Pending',property: 'pending' , width: 110, align: 'center' },
+//         { label: 'Remark', property: 'review', width: 80, align: 'center' },
+//         // { label: 'ID', property: 'id', width: 100, align: 'left' },
+        
+//     ];
+
+//     function drawAllSalesHeader() {
+//         doc.font('Helvetica-Bold').fontSize(16).fillColor('#333').text('Client Due Tracker (Sales)', { align: 'center' });
+//         doc.font('Helvetica-Bold').fontSize(10).fillColor('#555');
+//         const tableTop = doc.y + 20;
+//         let currentX = 30; // Start from left margin
+
+//         doc.rect(currentX, tableTop, doc.page.width - 2 * currentX, 30).fill('#4361ee');
+//         doc.fillColor('#fff');
+
+//         tableHeaders.forEach(header => {
+//             doc.text(header.label, currentX, tableTop + 8, { width: header.width, align: header.align });
+//             currentX += header.width;
+//         });
+
+//         return tableTop + 30;
+//     }
+
+//     let y = drawAllSalesHeader();
+//     const minRowHeight = 20;
+//     const bottomMargin = 60;
+//     const startX = 30; // Starting X for the first column
+
+//     activeSales.forEach((row, i) => {
+//         let rowHeight = minRowHeight;
+//         let currentX = startX;
+
+//         const cells = tableHeaders.map(header => {
+//             const text = String(row[header.property] !== undefined ? row[header.property] : '');
+//             const height = doc.heightOfString(text, { width: header.width, align: header.align });
+//             return { text, height, width: header.width, align: header.align, property: header.property };
+//         });
+
+//         rowHeight = Math.max(minRowHeight, ...cells.map(cell => cell.height + 8));
+
+//         if (y + rowHeight > doc.page.height - bottomMargin) {
+//             doc.addPage();
+//             y = drawAllSalesHeader();
+//         }
+
+//         doc.rect(startX, y, doc.page.width - 2 * startX, rowHeight).fill(i % 2 === 0 ? '#e7f0fd' : '#fff');
+//         doc.fillColor('#222').fontSize(9);
+
+//         cells.forEach(cell => {
+//             doc.text(cell.text, currentX, y + 5, { width: cell.width, align: cell.align });
+//             currentX += cell.width;
+//         });
+
+//         y += rowHeight;
+//     });
+
+//     const totalBillAmount = activeSales.reduce((sum, row) => sum + (row.bill_amount || 0), 0);
+//     const totalReceived = activeSales.reduce((sum, row) => sum + (row.received || 0), 0);
+//     const totalTDS = activeSales.reduce((sum, row) => sum + (row.tds || 0), 0);
+
+//     doc.rect(startX, y, doc.page.width - 2 * startX, 30).fill('#4361ee');
+//     doc.fillColor('#fff').fontSize(12).font('Helvetica-Bold');
+
+//     let totalX = startX;
+//     doc.text('Total', totalX + 10, y + 8, { width: tableHeaders[0].width, align: 'left' });
+//     totalX += tableHeaders[0].width + tableHeaders[1].width + tableHeaders[2].width + tableHeaders[3].width;
+
+//     doc.text(totalBillAmount.toFixed(2), totalX + 60, y + 8, { width: tableHeaders[4].width, align: 'right' });
+//     totalX += tableHeaders[3].width;
+//     doc.text(totalReceived.toFixed(2), totalX + 90, y + 8, { width: tableHeaders[5].width, align: 'right' });
+//     totalX += tableHeaders[4].width;
+//     doc.text(totalTDS.toFixed(2), totalX + 90, y + 8, { width: tableHeaders[6].width, align: 'right' });
+
+//     doc.fillColor('#888').fontSize(10).text(`Generated on: ${new Date().toLocaleString()}`, 0, doc.page.height - 40, { align: 'center', width: doc.page.width });
+//     doc.end();
+// });
 
 app.get("/purchase", (req, res) => {
     let purchases = loadPurchases();
@@ -403,7 +587,7 @@ app.post("/purchase/new", (req, res) => {
     const debit_amt = req.body.debit_amt ? parseFloat(req.body.debit_amt) : 0;
     const credit_amt = parseFloat(req.body.credit_amt);
     purchases.push({
-        id: Date.now(),
+        id: getNextId("p-", purchases),
         creditors: req.body.creditors,
         date: req.body.date,
         invoice_no: req.body.invoice_no,
@@ -446,11 +630,19 @@ app.post("/purchase/delete/:id", (req, res) => {
 
 app.get('/purchase/excel/preview', (req, res) => {
     const purchases = loadPurchases();
-    res.render('purchase_excel_preview', { purchases });
+    
+    // Filter to only include entries with status=true
+    const activePurchases = purchases.filter(entry => entry.status !== false);
+    
+    res.render('purchase_excel_preview', { purchases: activePurchases });
 });
 
 app.get('/purchase/excel/download', async (req, res) => {
     const purchases = loadPurchases();
+    
+    // Filter to only include entries with status=true
+    const activePurchases = purchases.filter(entry => entry.status !== false);
+    
     const workbook = new ExcelJS.Workbook();
     const worksheet = workbook.addWorksheet('Purchase Payment Pending');
     worksheet.columns = [
@@ -463,7 +655,7 @@ app.get('/purchase/excel/download', async (req, res) => {
         { header: 'Days', key: 'days', width: 10 },
         { header: 'Pending', key: 'pending', width: 12 }
     ];
-    purchases.sort((a, b) => new Date(a.date) - new Date(b.date)).forEach(entry => {
+    activePurchases.sort((a, b) => new Date(a.date) - new Date(b.date)).forEach(entry => {
         worksheet.addRow({
             creditors: entry.creditors,
             date: entry.date,
@@ -488,8 +680,12 @@ app.get('/purchase/excel/download', async (req, res) => {
 
 app.get('/purchase/partywise', (req, res) => {
     const purchases = loadPurchases();
+    
+    // Filter to only include entries with status=true
+    const activePurchases = purchases.filter(entry => entry.status !== false);
+    
     const partywise = {};
-    purchases.forEach(entry => {
+    activePurchases.forEach(entry => {
         const pending = entry.credit_amt - (entry.debit_amt ? entry.debit_amt : 0);
         if (!partywise[entry.creditors]) {
             partywise[entry.creditors] = { payable: 0, credit_amt: 0 };
@@ -503,8 +699,12 @@ app.get('/purchase/partywise', (req, res) => {
 
 app.get('/purchase/partywise/pdf', (req, res) => {
     const purchases = loadPurchases();
+    
+    // Filter to only include entries with status=true
+    const activePurchases = purchases.filter(entry => entry.status !== false);
+    
     const partywise = {};
-    purchases.forEach(entry => {
+    activePurchases.forEach(entry => {
         const pending = entry.credit_amt - (entry.debit_amt ? entry.debit_amt : 0);
         if (!partywise[entry.creditors]) {
             partywise[entry.creditors] = { payable: 0, credit_amt: 0 };
@@ -575,11 +775,14 @@ app.get('/purchase/partywise/pdf', (req, res) => {
 app.get("/purchase/all/pdf", (req, res) => {
     const purchases = loadPurchases();
 
-    purchases.forEach(entry => {
+    // Filter to only include entries with status=true
+    const activePurchases = purchases.filter(entry => entry.status !== false);
+
+    activePurchases.forEach(entry => {
         entry.credit_day = Math.abs(daysBetweenToday(entry.date));
     });
 
-    purchases.sort((a, b) => b.credit_day - a.credit_day);
+    activePurchases.sort((a, b) => b.credit_day - a.credit_day);
 
     const doc = new PDFDocument({ layout: 'landscape', margin: 30 });
     doc.pipe(res);
@@ -617,7 +820,7 @@ app.get("/purchase/all/pdf", (req, res) => {
     const bottomMargin = 60;
     const startX = 30; // Starting X for the first column
 
-    purchases.forEach((row, i) => {
+    activePurchases.forEach((row, i) => {
         let rowHeight = minRowHeight;
         let currentX = startX;
 
@@ -645,8 +848,8 @@ app.get("/purchase/all/pdf", (req, res) => {
         y += rowHeight;
     });
 
-    const totalDebitAmount = purchases.reduce((sum, row) => sum + (row.debit_amt || 0), 0);
-    const totalCreditAmount = purchases.reduce((sum, row) => sum + (row.credit_amt || 0), 0);
+    const totalDebitAmount = activePurchases.reduce((sum, row) => sum + (row.debit_amt || 0), 0);
+    const totalCreditAmount = activePurchases.reduce((sum, row) => sum + (row.credit_amt || 0), 0);
 
     doc.rect(startX, y, doc.page.width - 2 * startX, 30).fill('#4361ee');
     doc.fillColor('#fff').fontSize(12).font('Helvetica-Bold');
@@ -679,7 +882,7 @@ app.post("/advance_payment/new", (req, res) => {
     const bill_amount = parseFloat(req.body.bill_amount);
     const paid_amount = parseFloat(req.body.paid_amount);
     advancePayment.push({
-        id: Date.now(),
+        id: getNextId("adv-", advancePayment),
         debtors: req.body.debtors,
         date: req.body.date,
         bill_amount,
@@ -844,8 +1047,234 @@ app.get('/advance_payment/partywise/pdf', (req, res) => {
 
 
 app.get('/analysis',(req,res)=>{
-    res.render('analysis_sales_purchase')
+    const sales = loadSales();
+    const purchases = loadPurchases();
+    
+    // Clean up analysis data to ensure consistent status values
+    const spAnalysis = cleanupAnalysisData();
+    
+    console.log(`Loading analysis data:`);
+    console.log(`Total analysis entries: ${spAnalysis.length}`);
+    console.log(`Entries with status=true: ${spAnalysis.filter(entry => entry.status === true).length}`);
+    console.log(`Entries with status=false: ${spAnalysis.filter(entry => entry.status === false).length}`);
+    console.log(`Entries with undefined status: ${spAnalysis.filter(entry => entry.status === undefined).length}`);
+    
+    // Filter to only include entries with status=true
+    const activeSales = sales.filter(entry => entry.status !== false);
+    const activePurchases = purchases.filter(entry => entry.status !== false);
+    
+    // Filter to only include analysis entries with status=true
+    const activeSpAnalysis = spAnalysis.filter(entry => {
+        // Explicitly check for status !== false and status !== 'false'
+        return entry.status !== false && entry.status !== 'false' && entry.status !== '0';
+    });
+    
+    // console.log(`Filtered analysis entries: ${activeSpAnalysis.length}`);
+    
+    res.render('analysis_sales_purchase', { 
+        sales: activeSales, 
+        purchases: activePurchases,
+        spAnalysis: activeSpAnalysis
+    });
 })
+
+app.post('/analysis', (req, res) => {
+    const spAnalysis = loadSpAnalysis();
+    const sales = loadSales();
+    const purchases = loadPurchases();
+
+    const salesId = req.body.sales_id;
+    const purchaseIds = req.body.purchase_ids ? (Array.isArray(req.body.purchase_ids) ? req.body.purchase_ids : [req.body.purchase_ids]) : [];
+
+    const selectedSale = sales.find(s => String(s.id) === String(salesId));
+    const selectedPurchases = purchases.filter(p => purchaseIds.includes(String(p.id)));
+
+    if (selectedSale) {
+        spAnalysis.push({
+            id: getNextId("spaid-", spAnalysis),
+            salesEntry: selectedSale,
+            purchaseEntries: selectedPurchases,
+            analysisDate: new Date().toISOString(),
+            status: true
+        });
+        saveSpAnalysis(spAnalysis);
+    }
+    res.redirect('/analysis');
+});
+
+app.post('/analysis/delete/:id', (req, res) => {
+    let spAnalysis = loadSpAnalysis();
+    const idx = spAnalysis.findIndex(entry => String(entry.id) === String(req.params.id));
+    if (idx !== -1) {
+        // console.log(`Deleting analysis entry: ${req.params.id}`);
+        // console.log(`Before deletion - status: ${spAnalysis[idx].status}`);
+        spAnalysis[idx].status = false;
+        // console.log(`After deletion - status: ${spAnalysis[idx].status}`);
+        saveSpAnalysis(spAnalysis);
+        // console.log(`Analysis data saved. Total entries: ${spAnalysis.length}, Active entries: ${spAnalysis.filter(entry => entry.status !== false).length}`);
+    } else {
+        // console.log(`Analysis entry not found: ${req.params.id}`);
+    }
+    res.redirect('/analysis');
+});
+
+app.get('/analysis/edit/:id', (req, res) => {
+    const spAnalysis = loadSpAnalysis();
+    const sales = loadSales();
+    const purchases = loadPurchases();
+    const entryToEdit = spAnalysis.find(entry => String(entry.id) === String(req.params.id));
+
+    if (entryToEdit) {
+        // Filter to only include entries with status=true
+        const activeSales = sales.filter(entry => entry.status !== false);
+        const activePurchases = purchases.filter(entry => entry.status !== false);
+        
+        res.render('analysis_sales_purchase_edit', { 
+            entryToEdit, 
+            sales: activeSales, 
+            purchases: activePurchases 
+        });
+    } else {
+        res.redirect('/analysis');
+    }
+});
+
+app.post('/analysis/edit/:id', (req, res) => {
+    const spAnalysis = loadSpAnalysis();
+    const idx = spAnalysis.findIndex(entry => String(entry.id) === String(req.params.id));
+
+    if (idx !== -1) {
+        const salesId = req.body.sales_id;
+        const purchaseIds = req.body.purchase_ids ? (Array.isArray(req.body.purchase_ids) ? req.body.purchase_ids : [req.body.purchase_ids]) : [];
+
+        const sales = loadSales();
+        const purchases = loadPurchases();
+
+        const selectedSale = sales.find(s => String(s.id) === String(salesId));
+        const selectedPurchases = purchases.filter(p => purchaseIds.includes(String(p.id)));
+
+        if (selectedSale) {
+            spAnalysis[idx] = {
+                id: spAnalysis[idx].id,
+                salesEntry: selectedSale,
+                purchaseEntries: selectedPurchases,
+                analysisDate: new Date().toISOString(),
+                status: true
+            };
+            saveSpAnalysis(spAnalysis);
+        }
+    }
+    res.redirect('/analysis');
+});
+
+app.get('/analysis/excel/preview', (req, res) => {
+    const spAnalysis = loadSpAnalysis();
+    
+    // Filter to only include entries with status=true
+    const activeSpAnalysis = spAnalysis.filter(entry => {
+        // Explicitly check for status !== false and status !== 'false'
+        return entry.status !== false && entry.status !== 'false' && entry.status !== '0';
+    });
+    
+    res.render('analysis_excel_preview', { spAnalysis: activeSpAnalysis });
+});
+
+app.get('/analysis/excel/download', async (req, res) => {
+    const spAnalysis = loadSpAnalysis();
+    
+    // Filter to only include entries with status=true
+    const activeSpAnalysis = spAnalysis.filter(entry => {
+        // Explicitly check for status !== false and status !== 'false'
+        return entry.status !== false && entry.status !== 'false' && entry.status !== '0';
+    });
+    
+    const workbook = new ExcelJS.Workbook();
+    const worksheet = workbook.addWorksheet('Sales-Purchase Analysis');
+
+    worksheet.columns = [
+        { header: 'Analysis ID', key: 'analysis_id', width: 15 },
+        { header: 'Analysis Date', key: 'analysis_date', width: 20 },
+        { header: 'Sales ID', key: 'sales_id', width: 15 },
+        { header: 'Debtor', key: 'debtor', width: 25 },
+        { header: 'Sales Invoice No.', key: 'sales_invoice_no', width: 20 },
+        { header: 'Sales Bill Amount', key: 'sales_bill_amount', width: 18 },
+        { header: 'Purchase ID', key: 'purchase_id', width: 15 },
+        { header: 'Creditor', key: 'creditor', width: 25 },
+        { header: 'Purchase Invoice No.', key: 'purchase_invoice_no', width: 20 },
+        { header: 'Purchase Credit Amount', key: 'purchase_credit_amount', width: 18 }
+    ];
+
+    activeSpAnalysis.forEach(analysis => {
+        const salesEntry = analysis.salesEntry;
+        const purchaseEntries = analysis.purchaseEntries || [];
+
+        if (purchaseEntries.length > 0) {
+            purchaseEntries.forEach(purchase => {
+                worksheet.addRow({
+                    analysis_id: analysis.id,
+                    analysis_date: new Date(analysis.analysisDate).toLocaleString(),
+                    sales_id: salesEntry.id,
+                    debtor: salesEntry.debtors,
+                    sales_invoice_no: salesEntry.invoice_no,
+                    sales_bill_amount: salesEntry.bill_amount,
+                    purchase_id: purchase.id,
+                    creditor: purchase.creditors,
+                    purchase_invoice_no: purchase.invoice_no,
+                    purchase_credit_amount: purchase.credit_amt
+                });
+            });
+        } else {
+            // If no purchase entries, still add the sales details
+            worksheet.addRow({
+                analysis_id: analysis.id,
+                analysis_date: new Date(analysis.analysisDate).toLocaleString(),
+                sales_id: salesEntry.id,
+                debtor: salesEntry.debtors,
+                sales_invoice_no: salesEntry.invoice_no,
+                sales_bill_amount: salesEntry.bill_amount,
+                purchase_id: '',
+                creditor: '',
+                purchase_invoice_no: '',
+                purchase_credit_amount: ''
+            });
+        }
+    });
+
+    const now = new Date();
+    const yyyy = now.getFullYear();
+    const mm = String(now.getMonth() + 1).padStart(2, '0');
+    const dd = String(now.getDate()).padStart(2, '0');
+    const filename = `sales_purchase_analysis_${yyyy}-${mm}-${dd}.xlsx`;
+    
+    res.setHeader('Content-Type', 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
+    res.setHeader('Content-Disposition', `attachment; filename="${filename}"`);
+    
+    const buffer = await workbook.xlsx.writeBuffer();
+    res.end(buffer);
+});
+
+// Debug route to test filtering
+app.get('/analysis/debug', (req, res) => {
+    const spAnalysis = loadSpAnalysis();
+    
+    // console.log('=== ANALYSIS DEBUG ===');
+    // console.log('Raw data:', JSON.stringify(spAnalysis, null, 2));
+    
+    const filtered = spAnalysis.filter(entry => {
+        const shouldInclude = entry.status !== false && entry.status !== 'false' && entry.status !== '0';
+        // console.log(`Entry ${entry.id}: status=${entry.status}, type=${typeof entry.status}, shouldInclude=${shouldInclude}`);
+        return shouldInclude;
+    });
+    
+    // console.log('Filtered data:', JSON.stringify(filtered, null, 2));
+    
+    res.json({
+        total: spAnalysis.length,
+        filtered: filtered.length,
+        raw: spAnalysis,
+        filtered_data: filtered
+    });
+});
 
 app.listen(PORT, () => {
     console.log(`Server running on http://localhost:${PORT}`);

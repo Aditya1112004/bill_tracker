@@ -5,43 +5,32 @@
     "invoice_no": "AI/24-25/3/18",
     "bill_amount": 13500,
     "received": 10710,
-    "id": 321403100628134,
     "tds": 0,
     "review": "-",
-    "status": true
-  },
-  {
-    "debtors": "PINTIP MEDIA PVT LTD",
-    "date": "2024-11-28",
-    "invoice_no": "AI/24-25/11/29",
-    "bill_amount": 35400,
-    "received": 35990,
-    "id": 56016748718000,
-    "tds": 0,
-    "review": "-",
-    "status": true
+    "status": true,
+    "id": "s-2"
   },
   {
     "debtors": "MICROWORLD ENTERPRISES",
     "date": "2025-03-03",
     "invoice_no": "AI/24-25/3/1",
     "bill_amount": 13924,
-    "id": 21500998884189,
     "received": 0,
     "tds": 0,
     "review": "-",
-    "status": true
+    "status": true,
+    "id": "s-1"
   },
   {
     "debtors": "PINTIP MEDIA PVT LTD",
     "date": "2025-03-21",
     "invoice_no": "AI/24-25/3/45",
     "bill_amount": 8850,
-    "received": 7269,
-    "id": 321189667859691,
+    "received": 7859,
     "tds": 0,
     "review": "-",
-    "status": true
+    "status": true,
+    "id": "s-3"
   },
   {
     "debtors": "THREATACTIX PVT LTD",
@@ -49,10 +38,10 @@
     "invoice_no": "AI/24-25/3/36",
     "bill_amount": 50676,
     "received": 50368,
-    "id": 982589463008491,
     "tds": 0,
     "review": "-",
-    "status": true
+    "status": true,
+    "id": "s-4"
   },
   {
     "debtors": "MICROWORLD ENTERPRISES",
@@ -60,10 +49,10 @@
     "invoice_no": "AI/24-25/3/61",
     "bill_amount": 958257,
     "received": 956902,
-    "id": 967836798287652,
     "tds": 0,
     "review": "-",
-    "status": true
+    "status": true,
+    "id": "s-5"
   },
   {
     "debtors": "SAVE ECO ENERGY INDIA PVT LTD",
@@ -71,21 +60,21 @@
     "invoice_no": "AI/25-26/4/11",
     "bill_amount": 60180,
     "received": 25500,
-    "id": 896251327078858,
     "tds": 0,
     "review": "-",
-    "status": true
+    "status": true,
+    "id": "s-6"
   },
   {
     "debtors": "MICROWORLD ENTERPRISES",
     "date": "2025-04-07",
     "invoice_no": "AI/25-26/4/20",
     "bill_amount": 23390,
-    "id": 958147889083656,
     "received": 0,
     "tds": 0,
     "review": "-",
-    "status": true
+    "status": true,
+    "id": "s-7"
   },
   {
     "debtors": "VACIS AUTOMATION PVT LTD",
@@ -94,9 +83,9 @@
     "bill_amount": 170,
     "received": 155,
     "tds": 2.88,
-    "id": 809356929396851,
     "review": "-",
-    "status": true
+    "status": true,
+    "id": "s-8"
   },
   {
     "debtors": "VACIS AUTOMATION PVT LTD",
@@ -105,9 +94,9 @@
     "bill_amount": 340,
     "received": 311,
     "tds": 5.76,
-    "id": 532339082300907,
     "review": "-",
-    "status": true
+    "status": true,
+    "id": "s-9"
   },
   {
     "debtors": "VACIS AUTOMATION PVT LTD",
@@ -116,9 +105,9 @@
     "bill_amount": 510,
     "received": 466,
     "tds": 8.64,
-    "id": 337266356336587,
     "review": "-",
-    "status": true
+    "status": true,
+    "id": "s-10"
   },
   {
     "debtors": "VACIS AUTOMATION PVT LTD",
@@ -127,9 +116,9 @@
     "bill_amount": 340,
     "received": 311,
     "tds": 5.64,
-    "id": 24338363047148,
     "review": "-",
-    "status": true
+    "status": true,
+    "id": "s-11"
   },
   {
     "debtors": "VACIS AUTOMATION PVT LTD",
@@ -137,10 +126,10 @@
     "invoice_no": "AI/25-26/5/43",
     "bill_amount": 170,
     "tds": 2.88,
-    "id": 242067285978345,
     "received": 0,
     "review": "-",
-    "status": true
+    "status": true,
+    "id": "s-12"
   },
   {
     "debtors": "SURATWWALA BUSINESS GROUP LTD",
@@ -148,340 +137,164 @@
     "invoice_no": "AI/25-26/6/8",
     "bill_amount": 76617,
     "received": 64930,
-    "id": 798931491125461,
     "tds": 0,
     "review": "-",
-    "status": true
+    "status": true,
+    "id": "s-13"
   },
   {
     "debtors": "HOLTEC ASIA PVT LTD",
     "date": "2025-06-10",
     "invoice_no": "AI/25-26/6/18",
     "bill_amount": 5900,
-    "id": 533199384015084,
     "received": 0,
     "tds": 0,
     "review": "-",
-    "status": true
-  },
-  {
-    "debtors": "SARVAGRAM FINCARE PVT LTD",
-    "date": "2025-06-10",
-    "invoice_no": "AI/25-26/6/22",
-    "bill_amount": 165106,
-    "id": 769067584056704,
-    "received": 0,
-    "tds": 0,
-    "review": "-",
-    "status": true
+    "status": true,
+    "id": "s-14"
   },
   {
     "debtors": "HERAMB MOBILE",
     "date": "2025-06-13",
     "invoice_no": "AI/25-26/6/28",
     "bill_amount": 1180,
-    "id": 494431236344078,
     "received": 0,
     "tds": 0,
     "review": "-",
-    "status": true
-  },
-  {
-    "debtors": "VACIS AUTOMATION PVT LTD",
-    "date": "2025-06-18",
-    "invoice_no": "AI/25-26/6/40",
-    "bill_amount": 24542,
-    "received": 22461,
-    "tds": 2079.8,
-    "id": 894948782210165,
-    "review": "-",
-    "status": true
+    "status": true,
+    "id": "s-15"
   },
   {
     "debtors": "WEATHER SPELL AIRCON ENGINEERS PVT LTD",
     "date": "2025-06-18",
     "invoice_no": "AI/25-26/6/42",
     "bill_amount": 1180,
-    "id": 262009142362536,
     "received": 0,
     "tds": 0,
     "review": "-",
-    "status": true
+    "status": true,
+    "id": "s-16"
   },
   {
     "debtors": "HERAMB MOBILE",
     "date": "2025-06-21",
     "invoice_no": "AI/25-26/6/46",
     "bill_amount": 590,
-    "id": 92529038852569,
     "received": 0,
     "tds": 0,
     "review": "-",
-    "status": true
-  },
-  {
-    "debtors": "VACIS AUTOMATION PVT LTD",
-    "date": "2025-06-23",
-    "invoice_no": "AI/25-26/6/48",
-    "bill_amount": 340,
-    "received": 311,
-    "tds": 28.8,
-    "id": 165276244724997,
-    "review": "-",
-    "status": true
-  },
-  {
-    "debtors": "OPTRASCAN INDIA PVT LTD",
-    "date": "2025-06-27",
-    "invoice_no": "AI/25-26/6/60",
-    "bill_amount": 1652,
-    "id": 905065058993223,
-    "received": 0,
-    "tds": 0,
-    "review": "-",
-    "status": true
-  },
-  {
-    "debtors": "NIPRO MEDICAL INDIA PVT LTD",
-    "date": "2025-06-27",
-    "invoice_no": "AI/25-26/6/61",
-    "bill_amount": 126848,
-    "received": 116098,
-    "id": 291930158325874,
-    "tds": 0,
-    "review": "-",
-    "status": true
-  },
-  {
-    "debtors": "ORIENT EXCHANGE & FIN SERVICES PVT LTD",
-    "date": "2025-06-28",
-    "invoice_no": "AI/25-26/6/63",
-    "bill_amount": 4130,
-    "id": 295444851293919,
-    "received": 0,
-    "tds": 0,
-    "review": "-",
-    "status": true
+    "status": true,
+    "id": "s-17"
   },
   {
     "debtors": "BHARAT DISTRIBUTORS",
     "date": "2025-06-30",
     "invoice_no": "AI/25-26/6/64",
     "bill_amount": 8260,
-    "received": 4500,
-    "id": 854562997773439,
+    "received": 7760,
     "tds": 0,
     "review": "-",
-    "status": true
-  },
-  {
-    "debtors": "A S SOLUTIONS TECH INDIA PVT LTD",
-    "date": "2025-06-30",
-    "invoice_no": "AI/25-26/6/65",
-    "bill_amount": 81165.12,
-    "id": 466729765364213,
-    "received": 0,
-    "tds": 0,
-    "review": "-",
-    "status": true
+    "status": true,
+    "id": "s-18"
   },
   {
     "debtors": "A S SOLUTIONS TECH INDIA PVT LTD",
     "date": "2025-06-30",
     "invoice_no": "AI/25-26/6/68",
     "bill_amount": 13702,
-    "id": 624193231900651,
     "received": 0,
     "tds": 0,
     "review": "-",
-    "status": true
-  },
-  {
-    "debtors": "VERISPRING ENGINEERING SOLUTIONS (INDIA) PVT LTD",
-    "date": "2025-07-01",
-    "invoice_no": "AI/25-26/07/11",
-    "bill_amount": 112100,
-    "id": 866873186943930,
-    "received": 0,
-    "tds": 0,
-    "review": "-",
-    "status": true
-  },
-  {
-    "debtors": "VERISPRING ENGINEERING SOLUTIONS (INDIA) PVT LTD",
-    "date": "2025-07-03",
-    "invoice_no": "AI/25-26/07/3",
-    "bill_amount": 111156,
-    "id": 404803787241172,
-    "received": 0,
-    "tds": 0,
-    "review": "-",
-    "status": true
-  },
-  {
-    "debtors": "VERISPRING ENGINEERING SOLUTIONS (INDIA) PVT LTD",
-    "date": "2025-07-03",
-    "invoice_no": "AI/25-26/07/4",
-    "bill_amount": 61950,
-    "id": 466057293692673,
-    "received": 0,
-    "tds": 0,
-    "review": "-",
-    "status": true
+    "status": true,
+    "id": "s-19"
   },
   {
     "debtors": "DESIGN CONSULTANTS ARCHITECTS",
     "date": "2025-07-03",
     "invoice_no": "AI/25-26/7/5",
     "bill_amount": 3327.6,
-    "id": 743579365684298,
-    "received": 0,
+    "received": 3150,
     "tds": 0,
     "review": "-",
-    "status": true
-  },
-  {
-    "debtors": "SAMRAT COMPUTERS",
-    "date": "2025-07-05",
-    "invoice_no": "AI/25-26/7/12",
-    "bill_amount": 8118,
-    "id": 715053157124069,
-    "received": 0,
-    "tds": 0,
-    "review": "-",
-    "status": true
-  },
-  {
-    "debtors": "PARSHURAM PRINTERS",
-    "date": "2025-07-05",
-    "invoice_no": "AI/25-26/7/16",
-    "bill_amount": 118531,
-    "id": 371172842835593,
-    "received": 0,
-    "tds": 0,
-    "review": "-",
-    "status": true
+    "status": true,
+    "id": "s-20"
   },
   {
     "debtors": "OPTRASCAN INDIA PVT LTD",
     "date": "2025-07-08",
     "invoice_no": "AI/25-26/7/17",
     "bill_amount": 4130,
-    "id": 521359034693619,
     "received": 0,
     "tds": 0,
     "review": "-",
-    "status": true
+    "status": true,
+    "id": "s-21"
   },
   {
     "debtors": "SURATWWALA BUSINESS GROUP LTD",
     "date": "2025-07-09",
     "invoice_no": "AI/25-26/7/18",
     "bill_amount": 43501,
-    "id": 136166467651194,
     "received": 0,
     "tds": 0,
     "review": "-",
-    "status": true
+    "status": true,
+    "id": "s-22"
   },
   {
     "debtors": "SURATWWALA BUSINESS GROUP LTD",
     "date": "2025-07-09",
     "invoice_no": "AI/25-26/7/19",
     "bill_amount": 49008,
-    "id": 882447769303253,
     "received": 0,
     "tds": 0,
     "review": "-",
-    "status": true
+    "status": true,
+    "id": "s-23"
   },
   {
     "debtors": "SURATWWALA BUSINESS GROUP LTD",
     "date": "2025-07-09",
     "invoice_no": "AI/25-26/7/21",
     "bill_amount": 63864,
-    "id": 991968081836052,
-    "received": 0,
+    "received": 57680,
     "tds": 0,
     "review": "-",
-    "status": true
-  },
-  {
-    "debtors": "CALFUS TECHNOLOGIES INDIA PVT LTD",
-    "date": "2025-07-10",
-    "invoice_no": "AI/25-26/7/24",
-    "bill_amount": 830602,
-    "id": 770872114984564,
-    "received": 0,
-    "tds": 0,
-    "review": "-",
-    "status": true
-  },
-  {
-    "debtors": "CALFUS TECHNOLOGIES INDIA PVT LTD",
-    "date": "2025-07-10",
-    "invoice_no": "AI/25-26/7/26",
-    "bill_amount": 313880,
-    "id": 864857082312544,
-    "received": 0,
-    "tds": 0,
-    "review": "-",
-    "status": true
+    "status": true,
+    "id": "s-24"
   },
   {
     "debtors": "SURATWWALA BUSINESS GROUP LTD",
     "date": "2025-07-11",
     "invoice_no": "AI/25-26/7/27",
     "bill_amount": 4720,
-    "id": 416355084113948,
     "received": 0,
     "tds": 0,
     "review": "-",
-    "status": true
+    "status": true,
+    "id": "s-25"
   },
   {
     "debtors": "SURATWWALA BUSINESS GROUP LTD",
     "date": "2025-07-15",
     "invoice_no": "AI/25-26/7/29",
     "bill_amount": 45764,
-    "id": 911224545310308,
     "received": 0,
     "tds": 0,
     "review": "-",
-    "status": true
-  },
-  {
-    "debtors": "SARVAGRAM FINCARE PVT LTD",
-    "date": "2025-07-16",
-    "invoice_no": "AI/25-26/7/32",
-    "bill_amount": 165106,
-    "id": 560180925164905,
-    "received": 0,
-    "tds": 0,
-    "review": "-",
-    "status": true
-  },
-  {
-    "debtors": "IMPETUS INFOSOLUTIONS",
-    "date": "2025-07-16",
-    "invoice_no": "AI/25-26/7/36",
-    "bill_amount": 32757,
-    "id": 783758500024934,
-    "received": 0,
-    "tds": 0,
-    "review": "-",
-    "status": true
+    "status": true,
+    "id": "s-26"
   },
   {
     "debtors": "RECTITUDE CONSULTING SERVICES PVT LTD",
     "date": "2025-07-17",
     "invoice_no": "AI/25-26/7/33",
     "bill_amount": 4248,
-    "id": 241265609988421,
     "received": 0,
     "tds": 0,
     "review": "-",
-    "status": true
+    "status": true,
+    "id": "s-27"
   },
   {
     "debtors": "VACIS AUTOMATION PVT LTD",
@@ -489,306 +302,471 @@
     "invoice_no": "AI/25-26/7/34",
     "bill_amount": 24881,
     "tds": 421.72,
-    "id": 960132139231822,
     "received": 0,
     "review": "-",
-    "status": true
-  },
-  {
-    "debtors": "FAIR AND SQUARE ENTERPRISES",
-    "date": "2025-07-18",
-    "invoice_no": "AI/25-26/7/35",
-    "bill_amount": 193520,
-    "id": 866236356071927,
-    "received": 0,
-    "tds": 0,
-    "review": "-",
-    "status": true
+    "status": true,
+    "id": "s-28"
   },
   {
     "debtors": "SAMUDRA ELECTRONICS SYSTEM PVT LTD",
     "date": "2025-07-19",
     "invoice_no": "AI/25-26/7/38",
     "bill_amount": 18258,
-    "id": 385202459497621,
     "received": 0,
     "tds": 0,
     "review": "-",
-    "status": true
-  },
-  {
-    "debtors": "OPTRA HEALTH PVT LTD",
-    "date": "2025-07-21",
-    "invoice_no": "AI/25-26/7/39",
-    "bill_amount": 219480,
-    "id": 457782618953446,
-    "received": 0,
-    "tds": 0,
-    "review": "-",
-    "status": true
-  },
-  {
-    "debtors": "OPTRASCAN INDIA PVT LTD",
-    "date": "2025-07-21",
-    "invoice_no": "AI/25-26/7/41",
-    "bill_amount": 226560,
-    "id": 31122709516851,
-    "received": 0,
-    "tds": 0,
-    "review": "-",
-    "status": true
+    "status": true,
+    "id": "s-29"
   },
   {
     "debtors": "NIPRO MEDICAL INDIA PVT LTD",
     "date": "2025-07-22",
     "invoice_no": "AI/25-26/7/42",
     "bill_amount": 59000,
-    "received": 24256,
-    "id": 493156576368661,
+    "received": 0,
     "tds": 0,
     "review": "-",
-    "status": true
+    "status": true,
+    "id": "s-30"
   },
   {
     "debtors": "LOGICALDNA TECHNO SYSTEMS PVT LTD",
     "date": "2025-07-22",
     "invoice_no": "AI/25-26/7/43",
     "bill_amount": 25339,
-    "id": 687289950395526,
     "received": 0,
     "tds": 0,
     "review": "-",
-    "status": true
-  },
-  {
-    "debtors": "ADEPTION INDIA LLP",
-    "date": "2025-07-22",
-    "invoice_no": "AI/25-26/7/44",
-    "bill_amount": 357289.84,
-    "id": 214415077798199,
-    "received": 0,
-    "tds": 0,
-    "review": "-",
-    "status": true
-  },
-  {
-    "debtors": "INTEGRIMEDICAL PRIVATE LIMITED",
-    "date": "2025-07-22",
-    "invoice_no": "AI/25-26/7/45",
-    "bill_amount": 4549,
-    "id": 193920350138252,
-    "received": 0,
-    "tds": 0,
-    "review": "-",
-    "status": true
-  },
-  {
-    "debtors": "UNIFIED INNOVATIONS & DESIGNS PVT LTD",
-    "date": "2025-07-22",
-    "invoice_no": "AI/25-26/7/46",
-    "bill_amount": 43188,
-    "id": 591749394767787,
-    "received": 0,
-    "tds": 0,
-    "review": "-",
-    "status": true
-  },
-  {
-    "debtors": "IZIEL HEALTHCARE LLP",
-    "date": "2025-07-22",
-    "invoice_no": "AI/25-26/7/47",
-    "bill_amount": 8130,
-    "id": 18816921437546,
-    "received": 0,
-    "tds": 0,
-    "review": "-",
-    "status": true
-  },
-  {
-    "debtors": "SKYROOF DIGITAL PVT LTD",
-    "date": "2025-07-22",
-    "invoice_no": "AI/25-26/7/48",
-    "bill_amount": 42802.14,
-    "id": 114599550329164,
-    "received": 0,
-    "tds": 0,
-    "review": "-",
-    "status": true
-  },
-  {
-    "debtors": "IMPETUS INFOSOLUTIONS",
-    "date": "2025-07-23",
-    "invoice_no": "AI/25-26/7/49",
-    "bill_amount": 81892,
-    "id": 133064313708517,
-    "received": 0,
-    "tds": 0,
-    "review": "-",
-    "status": true
+    "status": true,
+    "id": "s-31"
   },
   {
     "debtors": "A S SOLUTIONS TECH INDIA PVT LTD",
     "date": "2025-07-23",
     "invoice_no": "AI/25-26/7/50",
     "bill_amount": 43644,
-    "id": 3043577940597,
     "received": 0,
     "tds": 0,
     "review": "-",
-    "status": true
+    "status": true,
+    "id": "s-32"
   },
   {
     "debtors": "BITS IN GLASS INDIA PVT LTD",
     "date": "2025-07-23",
     "invoice_no": "AI/25-26/7/51 ",
     "bill_amount": 3186,
-    "id": 39860880340231,
     "received": 0,
     "tds": 0,
     "review": "-",
-    "status": true
+    "status": true,
+    "id": "s-33"
   },
   {
     "debtors": "CALFUS TECHNOLOGIES INDIA PVT LTD",
     "date": "2025-07-24",
     "invoice_no": "AI/25-26/7/52",
     "bill_amount": 12154,
-    "id": 285180973727492,
     "received": 0,
     "tds": 0,
     "review": "-",
-    "status": true
+    "status": true,
+    "id": "s-34"
   },
   {
     "debtors": "HERAMB MOBILE",
     "date": "2025-07-25",
     "invoice_no": "AI/25-26/7/53",
     "bill_amount": 5900,
-    "id": 288320443020397,
     "received": 0,
     "tds": 0,
     "review": "-",
-    "status": true
-  },
-  {
-    "debtors": "IMPETUS INFOSOLUTIONS",
-    "date": "2025-07-25",
-    "invoice_no": "AI/25-26/7/54",
-    "bill_amount": 24603,
-    "id": 732316002028418,
-    "received": 0,
-    "tds": 0,
-    "review": "-",
-    "status": true
-  },
-  {
-    "debtors": "MIJU COMPONENTS PVT LTD",
-    "date": "2025-07-25",
-    "invoice_no": "AI/25-26/7/55",
-    "bill_amount": 21948,
-    "id": 129237269649147,
-    "received": 0,
-    "tds": 0,
-    "review": "-",
-    "status": true
-  },
-  {
-    "debtors": "RAVIRAJ TECHPARK PVT LTD",
-    "date": "2025-07-25",
-    "invoice_no": "AI/25-26/7/56",
-    "bill_amount": 104902,
-    "id": 908774221110272,
-    "received": 0,
-    "tds": 0,
-    "review": "-",
-    "status": true
+    "status": true,
+    "id": "s-35"
   },
   {
     "debtors": "PM INDUSTRIES AND PROCESS EQUIPMENTS PVT LTD",
     "date": "2025-07-25",
     "invoice_no": "AI/25-26/7/57",
     "bill_amount": 31270,
-    "id": 82391977727719,
     "received": 0,
     "tds": 0,
     "review": "-",
-    "status": true
-  },
-  {
-    "debtors": "SAMRAT COMPUTERS",
-    "date": "2025-07-25",
-    "invoice_no": "AI/25-26/7/59",
-    "bill_amount": 7788,
-    "id": 439450823374114,
-    "received": 0,
-    "tds": 0,
-    "review": "-",
-    "status": true
-  },
-  {
-    "debtors": "GLOBAL SQUARE REALTY LLP",
-    "date": "2025-07-28",
-    "invoice_no": "AI/25-26/7/62",
-    "bill_amount": 35400,
-    "id": 353047416530218,
-    "received": 0,
-    "tds": 0,
-    "review": "-",
-    "status": true
+    "status": true,
+    "id": "s-36"
   },
   {
     "debtors": "MULTITECH PRODUCTS PVT LTD",
     "date": "2025-07-26",
     "invoice_no": "AI/25-26/7/63",
     "bill_amount": 11505,
-    "id": 56596910861113,
     "received": 0,
     "tds": 0,
     "review": "-",
-    "status": true
+    "status": true,
+    "id": "s-37"
   },
   {
     "debtors": "CALFUS TECHNOLOGIES INDIA PVT LTD",
     "date": "2025-07-28",
     "invoice_no": "AI/25-26/7/64",
     "bill_amount": 257075,
-    "id": 389717024473266,
     "received": 0,
     "tds": 0,
     "review": "-",
-    "status": true
+    "status": true,
+    "id": "s-38"
   },
   {
     "debtors": "A S SOLUTIONS TECH INDIA PVT LTD",
     "date": "2025-07-29",
     "invoice_no": "AI/25-26/7/65",
     "bill_amount": 3153,
-    "id": 773262715686552,
     "received": 0,
     "tds": 0,
     "review": "-",
-    "status": true
+    "status": true,
+    "id": "s-39"
   },
   {
     "debtors": "MICROWORLD ENTERPRISES",
     "date": "2025-07-31",
     "invoice_no": "AI/25-26/7/66",
     "bill_amount": 8260,
-    "id": 907484459572917,
     "received": 0,
     "tds": 0,
     "review": "-",
-    "status": true
+    "status": true,
+    "id": "s-40"
   },
   {
-    "id": 1754632517040,
-    "debtors": "aditya",
-    "date": "2004-01-11",
-    "invoice_no": "AI/04-05/01/11",
-    "review": "adsdf sdfdf",
-    "bill_amount": 1000,
-    "received": 100,
-    "tds": 100,
+    "debtors": "OPTRASCAN INDIA PVT LTD",
+    "date": "2025-08-01",
+    "invoice_no": "AI/25-26/8/2",
+    "bill_amount": 17700,
+    "received": 0,
+    "tds": 0,
+    "review": "-",
+    "status": true,
+    "id": "s-41"
+  },
+  {
+    "debtors": "JANATA SAHAKARI BANK LTD DHARASHIV",
+    "date": "2025-08-01",
+    "invoice_no": "AI/25-26/8/3",
+    "bill_amount": 6226961,
+    "received": 5872961,
+    "tds": 0,
+    "review": "-",
+    "status": true,
+    "id": "s-42"
+  },
+  {
+    "debtors": "MICROWORLD ENTERPRISES",
+    "date": "2025-08-02",
+    "invoice_no": "AI/25-26/8/4",
+    "bill_amount": 277040,
+    "received": 0,
+    "tds": 0,
+    "review": "-",
+    "status": true,
+    "id": "s-43"
+  },
+  {
+    "debtors": "VYOMSIGMA BUILDZONE PVT LTD",
+    "date": "2025-08-04",
+    "invoice_no": "AI/25-26/8/6",
+    "bill_amount": 61950,
+    "received": 56700,
+    "tds": 0,
+    "review": "-",
+    "status": true,
+    "id": "s-44"
+  },
+  {
+    "debtors": "BHARAT DISTRIBUTORS",
+    "date": "2025-08-06",
+    "invoice_no": "AI/25-26/8/8",
+    "bill_amount": 2360,
+    "received": 2000,
+    "tds": 0,
+    "review": "-",
+    "status": true,
+    "id": "s-45"
+  },
+  {
+    "debtors": "GLOBAL SQUARE REALTY LLP",
+    "date": "2025-08-08",
+    "invoice_no": "AI/25-26/8/9",
+    "bill_amount": 147500,
+    "received": 0,
+    "tds": 0,
+    "review": "-",
+    "status": true,
+    "id": "s-46"
+  },
+  {
+    "debtors": "NIPRO MEDICAL INDIA PVT LTD",
+    "date": "2025-08-08",
+    "invoice_no": "AI/25-26/8/10",
+    "bill_amount": 28622,
+    "received": 24256,
+    "tds": 0,
+    "review": "-",
+    "status": true,
+    "id": "s-47"
+  },
+  {
+    "debtors": "BITS IN GLASS INDIA PVT LTD",
+    "date": "2025-08-08",
+    "invoice_no": "AI/25-26/8/11",
+    "bill_amount": 3186,
+    "received": 0,
+    "tds": 0,
+    "review": "-",
+    "status": true,
+    "id": "s-48"
+  },
+  {
+    "debtors": "BITS IN GLASS INDIA PVT LTD",
+    "date": "2025-08-08",
+    "invoice_no": "AI/25-26/8/12",
+    "bill_amount": 195290,
+    "received": 0,
+    "tds": 0,
+    "review": "-",
+    "status": true,
+    "id": "s-49"
+  },
+  {
+    "debtors": "A S SOLUTIONS TECH INDIA PVT LTD",
+    "date": "2025-08-08",
+    "invoice_no": "AI/25-26/8/13",
+    "bill_amount": 140944,
+    "received": 0,
+    "tds": 0,
+    "review": "-",
+    "status": true,
+    "id": "s-50"
+  },
+  {
+    "debtors": "IZIEL HEALTHCARE LLP",
+    "date": "2025-08-09",
+    "invoice_no": "AI/25-26/8/14",
+    "bill_amount": 16520,
+    "received": 0,
+    "tds": 0,
+    "review": "-",
+    "status": true,
+    "id": "s-51"
+  },
+  {
+    "debtors": "IZIEL HEALTHCARE LLP",
+    "date": "2025-08-09",
+    "invoice_no": "AI/25-26/8/16",
+    "bill_amount": 15319,
+    "received": 0,
+    "tds": 0,
+    "review": "-",
+    "status": true,
+    "id": "s-52"
+  },
+  {
+    "debtors": "SARVAGRAM FINCARE PVT LTD",
+    "date": "2025-08-09",
+    "invoice_no": "AI/25-26/8/17",
+    "bill_amount": 153164,
+    "received": 0,
+    "tds": 0,
+    "review": "-",
+    "status": true,
+    "id": "s-53"
+  },
+  {
+    "debtors": "TRITECH ENGINEERING PROJECTS",
+    "date": "2025-08-09",
+    "invoice_no": "AI/25-26/8/18",
+    "bill_amount": 7800,
+    "received": 0,
+    "tds": 0,
+    "review": "-",
+    "status": true,
+    "id": "s-54"
+  },
+  {
+    "debtors": "CALFUS TECHNOLOGIES INDIA PVT LTD",
+    "date": "2025-08-09",
+    "invoice_no": "AI/25-26/8/19",
+    "bill_amount": 29653,
+    "received": 0,
+    "tds": 0,
+    "review": "-",
+    "status": true,
+    "id": "s-55"
+  },
+  {
+    "debtors": "CALFUS TECHNOLOGIES INDIA PVT LTD",
+    "date": "2025-08-09",
+    "invoice_no": "AI/25-26/8/20",
+    "bill_amount": 41066,
+    "received": 0,
+    "tds": 0,
+    "review": "-",
+    "status": true,
+    "id": "s-56"
+  },
+  {
+    "debtors": "OPTRASCAN INDIA PVT LTD",
+    "date": "2025-08-09",
+    "invoice_no": "AI/25-26/8/21",
+    "bill_amount": 61950,
+    "received": 0,
+    "tds": 0,
+    "review": "-",
+    "status": true,
+    "id": "s-57"
+  },
+  {
+    "debtors": "VERISPRING ENGINEERING SOLUTIONS (INDIA) PVT LTD",
+    "date": "2025-08-11",
+    "invoice_no": "AI/25-26/8/22",
+    "bill_amount": 4500,
+    "received": 0,
+    "tds": 0,
+    "review": "-",
+    "status": true,
+    "id": "s-58"
+  },
+  {
+    "debtors": "ULTRASEAL (INDIA) PVT LTD",
+    "date": "2025-08-11",
+    "invoice_no": "AI/25-26/8/23",
+    "bill_amount": 4130,
+    "received": 0,
+    "tds": 0,
+    "review": "-",
+    "status": true,
+    "id": "s-59"
+  },
+  {
+    "debtors": "A S SOLUTIONS TECH INDIA PVT LTD",
+    "date": "2025-08-12",
+    "invoice_no": "AI/25-26/8/24",
+    "bill_amount": 99120,
+    "received": 0,
+    "tds": 0,
+    "review": "-",
+    "status": true,
+    "id": "s-60"
+  },
+  {
+    "debtors": "GLOBAL SQUARE REALTY LLP",
+    "date": "2025-08-12",
+    "invoice_no": "AI/25-26/8/25",
+    "bill_amount": 99120,
+    "received": 0,
+    "tds": 0,
+    "review": "-",
+    "status": true,
+    "id": "s-61"
+  },
+  {
+    "debtors": "SURATWWALA BUSINESS GROUP LTD",
+    "date": "2025-08-12",
+    "invoice_no": "AI/25-26/8/26",
+    "bill_amount": 45253,
+    "received": 0,
+    "tds": 0,
+    "review": "-",
+    "status": true,
+    "id": "s-62"
+  },
+  {
+    "debtors": "SURATWWALA BUSINESS GROUP LTD",
+    "date": "2025-08-12",
+    "invoice_no": "AI/25-26/8/27",
+    "bill_amount": 90506,
+    "received": 0,
+    "tds": 0,
+    "review": "-",
+    "status": true,
+    "id": "s-63"
+  },
+  {
+    "debtors": "THE PINNACLE GROUP INC",
+    "date": "2025-08-12",
+    "invoice_no": "AI/25-26/8/28",
+    "bill_amount": 8201,
+    "received": 0,
+    "tds": 0,
+    "review": "-",
+    "status": true,
+    "id": "s-64"
+  },
+  {
+    "debtors": "OPTRASCAN INDIA PVT LTD",
+    "date": "2025-08-13",
+    "invoice_no": "AI/25-26/8/29",
+    "bill_amount": 121540,
+    "received": 0,
+    "tds": 0,
+    "review": "-",
+    "status": true,
+    "id": "s-65"
+  },
+  {
+    "debtors": "IZIEL HEALTHCARE LLP",
+    "date": "2025-08-13",
+    "invoice_no": "AI/25-26/8/31",
+    "bill_amount": 9638,
+    "received": 0,
+    "tds": 0,
+    "review": "-",
+    "status": true,
+    "id": "s-66"
+  },
+  {
+    "debtors": "BITS IN GLASS INDIA PVT LTD",
+    "date": "2025-08-13",
+    "invoice_no": "AI/25-26/8/32",
+    "bill_amount": 117174,
+    "received": 0,
+    "tds": 0,
+    "review": "-",
+    "status": true,
+    "id": "s-67"
+  },
+  {
+    "debtors": "JFE ENGINEERING INDIA PVT LTD",
+    "date": "2025-08-14",
+    "invoice_no": "AI/25-26/8/33",
+    "bill_amount": 10502,
+    "received": 0,
+    "tds": 0,
+    "review": "-",
+    "status": true,
+    "id": "s-68"
+  },
+  {
+    "debtors": "SURATWWALA BUSINESS GROUP LTD",
+    "date": "2025-08-14",
+    "invoice_no": "AI/25-26/8/34",
+    "bill_amount": 1475,
+    "received": 0,
+    "tds": 0,
+    "review": "-",
+    "status": true,
+    "id": "s-69"
+  },
+  {
+    "id": "s-70",
+    "debtors": "aditya kumawat",
+    "date": "2025-08-15",
+    "invoice_no": "AI/25-26/08/15",
+    "review": "sdf",
+    "bill_amount": 10000,
+    "received": 1000,
+    "tds": 10,
     "status": true
   }
 ]

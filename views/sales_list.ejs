@@ -30,233 +30,265 @@ sales.sort((a, b) => parseDMY(a.date) - parseDMY(b.date)).forEach(entry => {
 <!DOCTYPE html>
 <html>
 <head>
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Sales List</title>
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/7.0.0/css/all.min.css" integrity="sha512-DxV+EoADOkOygM4IR9yXP8Sb2qwgidEmeqAEmDKIOfPRQZOWbXCzLC6vjbZyy0vPisbH2SyW27+ddLVCN+OMzQ==" crossorigin="anonymous" referrerpolicy="no-referrer" />
-  <link rel="stylesheet" href="/style.css">
-  <script>
-    function filterTable() {
-      var input = document.getElementById('searchInput');
-      var filter = input.value.toLowerCase();
-      var table = document.getElementById('salesTable');
-      var trs = table.getElementsByTagName('tr');
-      for (var i = 1; i < trs.length; i++) {
-        var td = trs[i].getElementsByTagName('td')[0];
-        if (td) {
-          var txtValue = td.textContent || td.innerText;
-          trs[i].style.display = txtValue.toLowerCase().indexOf(filter) > -1 ? '' : 'none';
-        }
-      }
-      updateTotalsDisplay(); // Call update after filtering
-    }
-    function toggleEditForm(id) {
-      var form = document.getElementById('edit-form-' + id);
-      form.style.display = form.style.display === 'none' ? 'table-row' : 'none';
-    }
-    function closeEditForm(id) {
-      var form = document.getElementById('edit-form-' + id);
-      form.style.display = 'none';
-    }
-    function toggleNewEntryForm() {
-      var form = document.getElementById('new-entry-form');
-      form.style.display = form.style.display === 'none' ? 'block' : 'none';
-    }
-    function autofillInvoiceNo() {
-      var dateInput = document.getElementById('new-date');
-      var invoiceInput = document.getElementById('new-invoice-no');
-      if (!dateInput.value) return;
-      var d = new Date(dateInput.value);
-      if (isNaN(d)) return;
-      var year = d.getFullYear().toString().slice(-2);
-      var nextYear = (d.getFullYear() + 1).toString().slice(-2);
-      var month = (d.getMonth() + 1).toString().padStart(2, '0');
-      var day = d.getDate().toString().padStart(2, '0');
-      invoiceInput.value = `AI/${year}-${nextYear}/${month}/${day}`;
-    }
-    function showDayFilterMenu() {
-      var menu = document.getElementById('dayFilterMenu');
-      menu.style.display = menu.style.display === 'block' ? 'none' : 'block';
-    }
-    function filterByDays(range) {
-      var table = document.getElementById('salesTable');
-      var trs = table.getElementsByTagName('tr');
-      for (var i = 1; i < trs.length; i++) {
-        var td = trs[i].getElementsByTagName('td')[4]; // Credit Day column
-        if (td) {
-          var val = parseInt(td.textContent || td.innerText);
-          var show = false;
-          if (range === '0-25' && val >= 0 && val <= 25) show = true;
-          if (range === '26-30' && val >= 26 && val <= 30) show = true;
-          if (range === 'above30' && val > 30) show = true;
-          trs[i].style.display = show ? '' : 'none';
-        }
-      }
-      document.getElementById('dayFilterMenu').style.display = 'none';
-      updateTotalsDisplay(); // Call update after filtering
-    }
-    function clearDayFilter() {
-      var table = document.getElementById('salesTable');
-      var trs = table.getElementsByTagName('tr');
-      for (var i = 1; i < trs.length; i++) {
-        trs[i].style.display = '';
-      }
-      document.getElementById('dayFilterMenu').style.display = 'none';
-      updateTotalsDisplay(); // Call update after clearing filter
-    }
-    
-    function updateTotalsDisplay() {
-      let currentTotalBill = 0;
-      let currentTotalReceived = 0;
-      let currentTotalTds = 0;
-      let currentTotalPending = 0;
+ <meta name="viewport" content="width=device-width, initial-scale=1.0">
+ <title>Sales List</title>
+ <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/7.0.0/css/all.min.css" xintegrity="sha512-DxV+EoADOkOygM4IR9yXP8Sb2qwgidEmeqAEmDKIOfPRQZOWbXCzLC6vjbZyy0vPisbH2SyW27+ddLVCN+OMzQ==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+ <link rel="stylesheet" href="/style.css">
+ 
+ <script>
+  // Helper function to parse numbers from table cells, handling potential non-numeric characters
+  function parseCellNumber(text) {
+    return parseFloat(text.replace(/[^0-9.-]+/g, "")) || 0;
+  }
 
-      var table = document.getElementById('salesTable');
-      var trs = table.getElementsByTagName('tr');
-      for (var i = 1; i < trs.length; i++) { // Skip header row
-        if (trs[i].style.display !== 'none') { // Only process visible rows
-          // Assuming the column order: Debtors, Date, Invoice No., Bill Amount, Credit Day, Received, TDS, Pending, Remark, Actions
-          const billAmount = parseFloat(trs[i].getElementsByTagName('td')[3].innerText) || 0;
-          const received = parseFloat(trs[i].getElementsByTagName('td')[5].innerText) || 0;
-          const tds = parseFloat(trs[i].getElementsByTagName('td')[6].innerText) || 0;
-
-          currentTotalBill += billAmount;
-          currentTotalReceived += received;
-          currentTotalTds += tds;
-          currentTotalPending += (billAmount - received - tds);
-        }
-      }
-      // Update the display elements
-      document.getElementById('totalBillDisplay').innerText = currentTotalBill.toFixed(2);
-      document.getElementById('totalPendingDisplay').innerText = currentTotalPending.toFixed(2);
-
-      // No need to update received and TDS total display as they are commented out in HTML
-      // document.getElementById('totalReceivedDisplay').innerText = currentTotalReceived.toFixed(2);
-      // document.getElementById('totalTdsDisplay').innerText = currentTotalTds.toFixed(2);
+  function filterTable() {
+   var input = document.getElementById('searchInput');
+   var filter = input.value.toLowerCase();
+   var table = document.getElementById('salesTable');
+   var trs = table.getElementsByTagName('tr');
+   for (var i = 1; i < trs.length; i++) {
+    var td = trs[i].getElementsByTagName('td')[2];
+    if (td) {
+     var txtValue = td.textContent || td.innerText;
+     trs[i].style.display = txtValue.toLowerCase().indexOf(filter) > -1 ? '' : 'none';
     }
+   }
+   updateTotalsDisplay(); // Call update after filtering
+  }
+  function toggleEditForm(id) {
+   var form = document.getElementById('edit-form-' + id);
+   form.style.display = form.style.display === 'none' ? 'table-row' : 'none';
+  }
+  function closeEditForm(id) {
+   var form = document.getElementById('edit-form-' + id);
+   form.style.display = 'none';
+  }
+  function toggleNewEntryForm() {
+   var form = document.getElementById('new-entry-form');
+   form.style.display = form.style.display === 'none' ? 'block' : 'none';
+  }
+  function autofillInvoiceNo() {
+   var dateInput = document.getElementById('new-date');
+   var invoiceInput = document.getElementById('new-invoice-no');
+   if (!dateInput.value) return;
+   var d = new Date(dateInput.value);
+   if (isNaN(d)) return;
+   var year = d.getFullYear().toString().slice(-2);
+   var nextYear = (d.getFullYear() + 1).toString().slice(-2);
+   var month = (d.getMonth() + 1).toString().padStart(2, '0');
+   var day = d.getDate().toString().padStart(2, '0');
+   invoiceInput.value = `AI/${year}-${nextYear}/${month}/${day}`;
+  }
+  function showDayFilterMenu() {
+   var menu = document.getElementById('dayFilterMenu');
+   menu.style.display = menu.style.display === 'block' ? 'none' : 'block';
+  }
+  function filterByDays(range) {
+   var table = document.getElementById('salesTable');
+   var trs = table.getElementsByTagName('tr');
+   for (var i = 1; i < trs.length; i++) {
+    // The 'Credit Day' column is the 7th <td> (index 6)
+    var td = trs[i].getElementsByTagName('td')[6]; 
+    if (td) {
+     var val = parseInt(td.textContent || td.innerText);
+     var show = false;
+     if (range === '0-25' && val >= 0 && val <= 25) show = true;
+     if (range === '26-30' && val >= 26 && val <= 30) show = true;
+     if (range === 'above30' && val > 30) show = true;
+     trs[i].style.display = show ? '' : 'none';
+    }
+   }
+   document.getElementById('dayFilterMenu').style.display = 'none';
+   updateTotalsDisplay(); // Call update after filtering
+  }
+  function clearDayFilter() {
+   var table = document.getElementById('salesTable');
+   var trs = table.getElementsByTagName('tr');
+   for (var i = 1; i < trs.length; i++) {
+    trs[i].style.display = '';
+   }
+   document.getElementById('dayFilterMenu').style.display = 'none';
+   updateTotalsDisplay(); // Call update after clearing filter
+  }
+  function getPdfUrl(preview) {
+   var select = document.getElementById('pdfRange');
+   var range = select ? select.value : '';
+   var url = '/sales/all/pdf';
+   var params = [];
+   if (range) params.push('range=' + encodeURIComponent(range));
+   if (preview) params.push('preview=1');
+   if (params.length) url += '?' + params.join('&');
+   return url;
+  }
+  function openPdfPreview() {
+   window.open(getPdfUrl(true), '_blank');
+  }
+  function downloadPdf() {
+   window.open(getPdfUrl(false), '_blank');
+  }
+  
+  function updateTotalsDisplay() {
+   let currentTotalBill = 0;
+   let currentTotalReceived = 0;
+   let currentTotalTds = 0;
+   let currentTotalPending = 0;
 
-    // Call updateTotalsDisplay on page load to set initial totals based on visible rows
-    window.onload = updateTotalsDisplay;
-  </script>
+   var table = document.getElementById('salesTable');
+   var trs = table.getElementsByTagName('tr');
+   for (var i = 1; i < trs.length; i++) { // Skip header row
+    if (trs[i].style.display !== 'none') { // Only process visible rows
+     const billAmount = parseCellNumber(trs[i].getElementsByTagName('td')[5].innerText);
+     const received = parseCellNumber(trs[i].getElementsByTagName('td')[7].innerText);
+     const tds = parseCellNumber(trs[i].getElementsByTagName('td')[8].innerText);
+     const pending = parseCellNumber(trs[i].getElementsByTagName('td')[9].innerText);
+
+     currentTotalBill += billAmount;
+     currentTotalReceived += received;
+     currentTotalTds += tds;
+     currentTotalPending += pending;
+    }
+   }
+   // Update the display elements
+   document.getElementById('totalBillDisplay').innerText = currentTotalBill.toFixed(2);
+   document.getElementById('totalPendingDisplay').innerText = currentTotalPending.toFixed(2);
+  }
+
+  // Call updateTotalsDisplay on page load to set initial totals based on visible rows
+  window.onload = updateTotalsDisplay;
+ </script>
 </head>
 <body>
-  <a href="/" style="position: absolute; left: 20px; top: 10px; text-decoration: none; font-size: 18px;">&larr; Back</a>
-  <button onclick="window.location.reload()" title="Reload" style="position: absolute; right: 30px; top: 18px; background: #fff; border: none; border-radius: 50%; box-shadow: 0 2px 8px rgba(34,34,59,0.10); width: 38px; height: 38px; cursor: pointer; display: flex; align-items: center; justify-content: center; font-size: 20px; color: #3a86ff; transition: background 0.2s;">
-    &#x21bb;
-  </button>
-  <h1>SALES PENDING DETAILS</h1>
-  <div style="display: flex; gap: 10px; margin-bottom: 15px; align-items: center;">
-    <!-- <button class="new-entry-btn" style="font-size: 16px;" onclick="toggleNewEntryForm()">+ New Entry</button> -->
-    <a href="/sales/partywise"><button style="font-size: 16px;">Debtors Total Receivable</button></a>
-    <a href="/sales/excel/preview" target="_blank"><button class="excel-btn" style="font-size: 16px;">Download Excel</button></a>
-    <a href="/sales/all/pdf" target="_blank"><button class="excel-btn" style="font-size: 16px;">Download PDF</button></a>
-    
-    <input id="searchInput" list="search-debtors-list" placeholder="Search by Debtor" style="font-size: 16px; padding: 6px;" />
-    <datalist id="search-debtors-list">
-      <% uniqueDebtors.forEach(debtor => { %>
-        <option value="<%= debtor %>"></option>
-      <% }); %>
-    </datalist>
-    <button onclick="filterTable()" style="font-size: 16px; padding: 10px 12px;">Search</button>
+ <a href="/" style="position: absolute; left: 20px; top: 10px; text-decoration: none; font-size: 18px;">&larr; Back</a>
+ <button onclick="window.location.reload()" title="Reload" style="position: absolute; right: 30px; top: 18px; background: #fff; border: none; border-radius: 50%; box-shadow: 0 2px 8px rgba(34,34,59,0.10); width: 38px; height: 38px; cursor: pointer; display: flex; align-items: center; justify-content: center; font-size: 20px; color: #3a86ff; transition: background 0.2s;">
+  &#x21bb;
+ </button>
+ <h1>SALES PENDING DETAILS</h1>
+ <div class="toolbar mt-3">
+  <a href="/sales/partywise" class="btn btn-outline">Debtors Total Receivable</a>
+  <a href="/sales/excel/preview" target="_blank" class="btn btn-success">Download Excel</a>
+  <div class="btn-group" style="display:inline-flex; align-items:center; gap:8px;">
+  
+   <button class="btn btn-success" style="font-size: 12px;" onclick="openPdfPreview()">Download PDF</button>
   </div>
-  <div id="new-entry-form" style="display:block; margin-bottom: 14px; background: #fff; border-radius: 12px; box-shadow: 0 2px 8px rgba(34,34,59,0.08); padding: 4px 16px; max-width: 1200px; margin-left:auto; margin-right:auto;">
-    <form action="/sales/new" method="post" style="display: flex; flex-wrap: wrap; gap: 16px; align-items: center; justify-content: center;">
-      <input name="debtors" list="debtors-list" placeholder="Debtors" required style="flex:1; min-width:120px;">
-      <datalist id="debtors-list">
-        <% uniqueDebtors.forEach(debtor => { %>
-          <option value="<%= debtor %>"></option>
-        <% }); %>
-      </datalist>
-      <input id="new-date" name="date" type="date" required style="flex:1; min-width:120px;" onchange="autofillInvoiceNo()">
-      <input id="new-invoice-no" name="invoice_no" placeholder="Invoice No." required style="flex:1; min-width:120px;">
-      <input name="bill_amount" type="number" step="0.01" placeholder="Bill Amount" required style="flex:1; min-width:120px;">
-      <input name="received" type="number" step="0.01" placeholder="Received (default 0)" style="flex:1; min-width:120px;">
-      <input name="tds" type="number" step="0.01" placeholder="TDS (default 0)" style="flex:1; min-width:120px;">
-      <input name="review" placeholder="Remark" style="flex:1; min-width:120px;">
-      <button class="new-entry-btn" type="submit" style="width: 70px; height: 30px; font-size: 16px; padding: 0px;"> Save </button>
-      <!-- <button type="button" onclick="toggleNewEntryForm()">Cancel</button> -->
-    </form>
+  <input id="searchInput" list="search-debtors-list" placeholder="Search by Debtor" />
+  <datalist id="search-debtors-list">
+   <% uniqueDebtors.forEach(debtor => { %>
+    <option value="<%= debtor %>"></option>
+   <% }); %>
+  </datalist>
+  <button class="btn btn-primary" style="font-size: 12px;" onclick="filterTable()">Search</button>
+ </div>
+ <div id="new-entry-form" class="section" style="display:block; max-width: 1200px; margin-left:auto; margin-right:auto;">
+  <form action="/sales/new" method="post" style="display: flex; flex-wrap: wrap; gap: 16px; align-items: center; justify-content: center; ">
+   <input name="debtors" list="debtors-list" placeholder="Debtors" required style="flex:1; min-width:120px;">
+   <datalist id="debtors-list">
+    <% uniqueDebtors.forEach(debtor => { %>
+     <option value="<%= debtor %>"></option>
+    <% }); %>
+   </datalist>
+   <input id="new-date" name="date" type="date" required style="flex:1; min-width:120px;" onchange="autofillInvoiceNo()">
+   <input id="new-invoice-no" name="invoice_no" placeholder="Invoice No." required style="flex:1; min-width:120px;">
+   <input name="bill_amount" type="number" step="0.01" placeholder="Bill Amount" required style="flex:1; min-width:120px;">
+   <input name="received" type="number" step="0.01" placeholder="Received (default 0)" style="flex:1; min-width:120px;">
+   <input name="tds" type="number" step="0.01" placeholder="TDS (default 0)" style="flex:1; min-width:120px;">
+   <input name="review" placeholder="Remark" style="flex:1; min-width:120px;">
+   <button class="btn btn-primary" type="submit" style="font-size: 12px;">Save</button>
+  </form>
+ </div>
+ <div class="page-container" style="width:90%;margin:0 auto;">
+  <div class="toolbar" style="justify-content:flex-end;">
+   <span>Total Bill: <span id="totalBillDisplay"><%= totalBill.toFixed(0) %></span></span>
+   <span style="margin: 0 10px ;"></span>
+   <span class="badge badge-danger">Total Pending: <span id="totalPendingDisplay"><%= totalPending.toFixed(0) %></span></span>
   </div>
-  <div style="width:90%;margin:0 auto;">
-    <div style="background:#e7f0fd; font-weight:bold; border-radius:8px; display:flex; justify-content:right; align-items:center; padding:10px 20px; margin-bottom:4px;">
-      <span>Total Bill: <span id="totalBillDisplay"><%= totalBill.toFixed(2) %></span></span>
-      <span style="margin: 0 10px ;"></span>
-      <!-- <span>Total Received: <%= totalReceived.toFixed(2) %></span>
-      <span>Total TDS: <%= totalTds.toFixed(2) %></span> -->
-      <span style="background-color: rgb(234, 60, 60); color: #fff; padding: 4px 8px; border-radius: 4px;">Total Pending: <span id="totalPendingDisplay"><%= totalPending.toFixed(2) %></span></span>
-    </div>
-  </div>
-  <table id="salesTable" border="1" style="border-collapse: collapse; width: 90%; margin: 0 auto;">
-    <thead>
-      <tr>
-        <th>Debtors</th>
-        <th>Date</th>
-        <th>Invoice No.</th>
-        <th>Bill Amount</th>
-        <th>Credit Day</th>
-        <th>Received</th>
-        <th>TDS</th>
-        <th>Pending</th>
-        <th>Remark</th>
-        <th>Actions
-          <span style="cursor:pointer; margin-left:10px; position:relative; " onclick="showDayFilterMenu()">&#x1F50D;
-            <div id="dayFilterMenu" style="width:150px; display:none; position:absolute; top:22px; right:0; background:#fff; border:1px solid #ccc; border-radius:6px; box-shadow:0 2px 8px rgba(0,0,0,0.08); z-index:10;">
-              <div style="padding:8px; cursor:pointer; color: #000;border: 1px solid #ccc;" onclick="filterByDays('0-25')">0-25 days</div>
-              <div style="padding:8px; cursor:pointer; color: #000;border: 1px solid #ccc;" onclick="filterByDays('26-30')">26-30 days</div>
-              <div style="padding:8px; cursor:pointer; color: #000;border: 1px solid #ccc;" onclick="filterByDays('above30')">Above 30 days</div>
-              
-            </div>
-          </span>
-        </th>
-      </tr>
-    </thead>
-    <!-- <tfoot>
-      <tr style="background:#e7f0fd; font-weight: bold;">
-        <td colspan="3" style="text-align:right;">Total:</td>
-        <td><%= totalBill.toFixed(2) %></td>
-        <td></td>
-        <td><%= totalReceived.toFixed(2) %></td>
-        <td><%= totalTds.toFixed(2) %></td>
-        <td><%= totalPending.toFixed(2) %></td>
-        <td></td>
-      </tr>
-    </tfoot> -->
-    <tbody>
-      <% sales.sort((a, b) => daysBetweenToday(b.date) - daysBetweenToday(a.date)).forEach(entry => { %>
-        <tr>
-          <td><%= entry.debtors %></td>
-          <td><%= entry.date %></td>
-          <td><%= entry.invoice_no %></td>
-          <td><%= Number(entry.bill_amount) %></td>
-          <td><%= daysBetweenToday(entry.date) %></td>
-          <td><%= Number(entry.received) %></td>
-          <td><%= Number(entry.tds) ? Number(entry.tds) : 0 %></td>
-          <td><%= ((Number(entry.bill_amount) - Number(entry.received)) - (Number(entry.tds) ? Number(entry.tds) : 0)).toFixed(2) %></td>
-          <td><%= entry.review %>
-          </td>          <td>
-            <button type="button" onclick="toggleEditForm(<%= entry.id %>)" style="font-size: 10px; margin: 0;padding: 5px;">Edit</button>
-            <form action="/sales/delete/<%= entry.id %>" method="POST" style="display:inline;">
-              <button class="delete-btn" type="submit" onclick="return confirm('Are you sure you want to delete this entry?');" style="font-size: 10px; margin: 0;padding: 5px;">Delete</button>
-            </form>
-          </td>
-        </tr>
-        <tr id="edit-form-<%= entry.id %>" style="display:none; background:#f4f6fb;">
-          <td colspan="9">
-            <form action="/sales/edit/<%= entry.id %>" method="post" style="display: flex; flex-wrap: wrap; gap: 1px; align-items: center; justify-content: center;">
-              
-              <input class='edit-form-input ' name="debtors" value="<%= entry.debtors %>" required style="flex:1; min-width:50px;">
-              <input class='edit-form-input ' name="date" type="date" value="<%= entry.date %>" required style="flex:1; min-width:50px;">
-              <input class='edit-form-input ' name="invoice_no" value="<%= entry.invoice_no %>" required style="flex:1; min-width:50px;">
-              <input class='edit-form-input ' name="bill_amount" type="number" step="0.01" placeholder="bill_amount" value="<%= Number(entry.bill_amount) %>" required style="flex:1; min-width:50px;">
-              <input class='edit-form-input ' name="received" type="number" step="0.01"placeholder="bill_amount" value="<%= Number(entry.received) %>" style="flex:1; min-width:50px;">
-              <input class='edit-form-input ' name="tds" type="number" step="0.01" value="<%= Number(entry.tds) ? Number(entry.tds) : 0 %>" placeholder="TDS" style="flex:1; min-width:100px;">
-              <input class='edit-form-input ' name="review" value="<%= entry.review %>"  style="flex:1; min-width:50px;">
-              <button class="new-entry-btn" type="submit">Save</button>
-              <button type="button" onclick="closeEditForm(<%= entry.id %>)">Cancel</button>
-            </form>
-          </td>
-        </tr>
-      <% }); %>
-    </tbody>
-  </table>
-</body>
-</html> 
+ </div>
+ <div class="table-wrap" style="width:98%; margin:0 auto;">
+ <table id="salesTable" class="table">
+  <thead>
+   <tr>
+    <th>Sr</th>
+    <th>ID</th>
+    <th>Debtors</th>
+    <th>Date</th>
+    <th>Invoice No.</th>
+    <th>Bill Amount</th>
+    <th>Credit Day</th>
+    <th>Received</th>
+    <th>TDS</th>
+    <th>Pending</th>
+    <th>Remark</th>
+    <th>Actions
+     <span style="cursor:pointer; margin-left:10px; position:relative; " onclick="showDayFilterMenu()">&#x1F50D;
+      <div id="dayFilterMenu" style="width:150px; display:none; position:absolute; top:22px; right:0; background:#fff; border:1px solid #ccc; border-radius:6px; box-shadow:0 2px 8px rgba(0,0,0,0.08); z-index:10;">
+       <div style="padding:8px; cursor:pointer; color: #000;border: 1px solid #ccc;" onclick="filterByDays('0-25')">0-25 days</div>
+       <div style="padding:8px; cursor:pointer; color: #000;border: 1px solid #ccc;" onclick="filterByDays('26-30')">26-30 days</div>
+       <div style="padding:8px; cursor:pointer; color: #000;border: 1px solid #ccc;" onclick="filterByDays('above30')">Above 30 days</div>
+              <!-- <div style="padding:8px; cursor:pointer; color: #000;border: 1px solid #ccc;" onclick="clearDayFilter()">Clear Filter</div> -->
+      </div>
+     </span>
+    </th>
+   </tr>
+  </thead>
+  <tbody>
+   <% sales.sort((a, b) => daysBetweenToday(b.date) - daysBetweenToday(a.date)).forEach((entry, i) => { %>
+    <tr>
+     <td><%= i + 1 %></td>
+     <td><%= entry.id %></td>
+     <td><%= entry.debtors %></td>
+     <td><%= entry.date %></td>
+     <td><%= entry.invoice_no %></td>
+     <td><%= Number(entry.bill_amount) %></td>
+     <td><%= daysBetweenToday(entry.date) %></td>
+     <td><%= Number(entry.received) %></td>
+     <td><%= Number(entry.tds) ? Number(entry.tds) : 0 %></td>
+     <td><%= ((Number(entry.bill_amount) - Number(entry.received)) - (Number(entry.tds) ? Number(entry.tds) : 0)).toFixed(2) %></td>
+     <td><%= entry.review %>
+     </td>     <td>
+      <button type="button" onclick="toggleEditForm('<%= entry.id %>')" class="btn btn-success" style="font-size: 10px; margin: 0;padding: 5px;">Edit</button>
+      <form action="/sales/delete/<%= entry.id %>" method="POST" style="display:inline;">
+       <button class="btn btn-danger" type="submit" onclick="return confirm('Are you sure you want to delete this entry?');" style="font-size: 10px; margin: 0;padding: 5px;">Delete</button>
+      </form>
+     </td>
+    </tr>
+    <tr id="edit-form-<%= entry.id %>" style="display:none; background:#f4f6fb;">
+     <td colspan="12">
+      <form action="/sales/edit/<%= entry.id %>" method="post" style="display: flex; flex-wrap: wrap; gap: 12px; align-items: flex-end; justify-content: flex-start; width: 100%;">
+       <div style="display:flex; flex-direction:column; gap:4px; min-width:220px; flex:1;">
+        <label>Debtor</label>
+        <input class='edit-form-input' name="debtors" value="<%= entry.debtors %>" required style="width:100%;">
+       </div>
+       <div style="display:flex; flex-direction:column; gap:4px; min-width:160px; flex:1;">
+        <label>Date</label>
+        <input class='edit-form-input' name="date" type="date" value="<%= entry.date %>" required style="width:100%;">
+       </div>
+       <div style="display:flex; flex-direction:column; gap:4px; min-width:170px; flex:1;">
+        <label>Invoice No.</label>
+        <input class='edit-form-input' name="invoice_no" value="<%= entry.invoice_no %>" required style="width:100%;">
+       </div>
+       <div style="display:flex; flex-direction:column; gap:4px; min-width:160px; flex:1;">
+        <label>Bill Amount</label>
+        <input class='edit-form-input' name="bill_amount" type="number" step="0.01" placeholder="Bill Amt" value="<%= Number(entry.bill_amount) %>" required style="width:100%;">
+       </div>
+       <div style="display:flex; flex-direction:column; gap:4px; min-width:160px; flex:1;">
+        <label>Received</label>
+        <input class='edit-form-input' name="received" type="number" step="0.01" placeholder="Received" value="<%= Number(entry.received) %>" style="width:100%;">
+       </div>
+       <div style="display:flex; flex-direction:column; gap:4px; min-width:160px; flex:1;">
+        <label>TDS</label>
+        <input class='edit-form-input' name="tds" type="number" step="0.01" value="<%= Number(entry.tds) ? Number(entry.tds) : 0 %>" placeholder="TDS" style="width:100%;">
+       </div>
+       <div style="display:flex; flex-direction:column; gap:4px; min-width:160px; flex:2;">
+        <label>Remark</label>
+        <input class='edit-form-input' name="review" value="<%= entry.review %>" style="width:80%;">
+       </div>
+       <button class="new-entry-btn" type="submit">Save</button>
+       <button type="button" onclick="closeEditForm('<%= entry.id %>')">Cancel</button>
+      </form>
+     </td>
+    </tr>
+   <% }); %>
+  </tbody>
+ </table>
+ </div>
+ </body>
+</html>

@@ -26,9 +26,9 @@
     <tbody>
       <% let grandTotal = 0, grandCredit = 0; %>
       <% partywiseList.forEach(row => { grandTotal += row.payable; grandCredit += row.credit_amt; %>
-        <tr>
-          <td><%= row.creditors %></td>
-          <td><%= row.payable.toFixed(2) %></td>
+        <tr >
+          <td style="font-size: 12px;"><%= row.creditors %></td>
+          <td style="font-size: 12px;"><%= row.payable.toFixed(2) %></td>
         </tr>
       <% }); %>
     </tbody>

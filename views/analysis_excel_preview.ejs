@@ -1,0 +1,144 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sales-Purchase Analysis Excel Preview</title>
+    <link rel="stylesheet" href="/style.css">
+    <style>
+        /* Reusing styles from analysis_sales_purchase.ejs for consistency */
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: #f0f2f5;
+            color: #333;
+        }
+
+        .container {
+            width: 95%;
+            max-width: 1600px; /* Wider for preview table */
+            margin: 40px auto;
+            background: #ffffff;
+            padding: 24px;
+            border-radius: 16px;
+            box-shadow: 0 10px 24px rgba(0, 0, 0, 0.12);
+        }
+
+        h1 {
+            color: #22223b;
+            font-size: 2.1em;
+            font-weight: 800;
+            text-align: center;
+            margin-bottom: 14px;
+            letter-spacing: 0.5px;
+        }
+
+        .subtext { text-align:center; color:#667085; margin-bottom: 18px; }
+
+        .home-button { margin-bottom: 16px; }
+
+        .excel-download-section {
+            display:flex; justify-content:center; align-items:center; gap:14px;
+            margin-bottom: 16px; padding: 14px; background: #f7f9fc; border-radius: 12px;
+            border: 1px solid #edf1f7;
+        }
+
+        .excel-download-btn {
+            background: linear-gradient(90deg, #248a48 0%, #1eb930 100%);
+            color: #fff; border: none; border-radius: 10px; cursor: pointer;
+            padding: 10px 18px; font-size: 0.95em; font-weight: 700;
+            box-shadow: 0 8px 18px rgba(25,135,84,0.25);
+        }
+
+        .excel-download-btn:hover { transform: translateY(-1px); }
+
+        table { width: 100%; border-collapse: separate; border-spacing: 0; background:#fff; border-radius: 12px; overflow: hidden; }
+
+        thead th { position: sticky; top:0; z-index:2; background: #3a86ff; color:#fff; padding:12px 10px; font-size:12px; text-transform:uppercase; letter-spacing: .4px; }
+
+        tbody td { padding: 10px; border-bottom: 1px solid #eef0f3; font-size: 13px; color:#222; }
+
+        tbody tr:nth-child(odd) { background: #fbfdff; }
+
+        .muted { color:#94a3b8; }
+        .numeric { text-align:right; font-variant-numeric: tabular-nums; }
+
+        .badge { display:inline-block; padding:2px 8px; border-radius:999px; background:#eef2ff; color:#3a86ff; font-size:11px; font-weight:700; }
+
+        .table-wrap { overflow:auto; border-radius: 12px; box-shadow: 0 2px 8px rgba(34,34,59,0.06); }
+
+        @media (max-width: 768px) {
+            thead th, tbody td { font-size: 11px; }
+        }
+
+    </style>
+</head>
+<body>
+    <div class="container">
+        <a href="/analysis" class="home-button">Back to Analysis</a>
+        <h1>Sales–Purchase Analysis Preview</h1>
+        <p class="subtext">Preview mirrors the Excel format. One row per purchase entry; sales columns repeat on the first row only.</p>
+
+        <div class="excel-download-section">
+            <span class="badge">Excel</span>
+            <a href="/analysis/excel/download" class="excel-download-btn">Download Excel</a>
+        </div>
+
+        <div class="table-wrap">
+        <table>
+            <thead>
+                <tr>
+                    <th>Analysis ID</th>
+                    <th>Analysis Date</th>
+                    <th>Sales ID</th>
+                    <th>Debtor</th>
+                    <th>Sales Invoice No.</th>
+                    <th class="numeric">Sales Bill Amount</th>
+                    <th>Purchase ID</th>
+                    <th>Creditor</th>
+                    <th>Purchase Invoice No.</th>
+                    <th class="numeric">Purchase Credit Amount</th>
+                </tr>
+            </thead>
+            <tbody>
+                <% if (spAnalysis && spAnalysis.length > 0) { %>
+                    <% spAnalysis.forEach(analysis => { 
+                        const purchases = analysis.purchaseEntries || [];
+                        if (purchases.length > 0) {
+                            purchases.forEach((purchase, idx) => { %>
+                                <tr>
+                                    <td><%= idx === 0 ? analysis.id : '' %></td>
+                                    <td><%= idx === 0 ? new Date(analysis.analysisDate).toLocaleString() : '' %></td>
+                                    <td><%= idx === 0 ? analysis.salesEntry.id : '' %></td>
+                                    <td><%= idx === 0 ? analysis.salesEntry.debtors : '' %></td>
+                                    <td><%= idx === 0 ? analysis.salesEntry.invoice_no : '' %></td>
+                                    <td class="numeric"><%= idx === 0 ? Number(analysis.salesEntry.bill_amount || 0).toFixed(2) : '' %></td>
+                                    <td><%= purchase.id %></td>
+                                    <td><%= purchase.creditors %></td>
+                                    <td><%= purchase.invoice_no %></td>
+                                    <td class="numeric"><%= Number(purchase.credit_amt || 0).toFixed(2) %></td>
+                                </tr>
+                            <% }) 
+                        } else { %>
+                            <tr>
+                                <td><%= analysis.id %></td>
+                                <td><%= new Date(analysis.analysisDate).toLocaleString() %></td>
+                                <td><%= analysis.salesEntry.id %></td>
+                                <td><%= analysis.salesEntry.debtors %></td>
+                                <td><%= analysis.salesEntry.invoice_no %></td>
+                                <td class="numeric"><%= Number(analysis.salesEntry.bill_amount || 0).toFixed(2) %></td>
+                                <td class="muted" colspan="4">No purchase entries</td>
+                            </tr>
+                        <% } 
+                    }) %>
+                <% } else { %>
+                    <tr>
+                        <td colspan="10" style="text-align: center;">No analysis data available for preview.</td>
+                    </tr>
+                <% } %>
+            </tbody>
+        </table>
+        </div>
+    </div>
+</body>
+</html>
+

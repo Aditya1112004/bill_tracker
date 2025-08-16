@@ -19,8 +19,8 @@
         <th>Creditors</th>
         <th>Date</th>
         <th>Invoice No.</th>
+        <th>Bill Amount</th>
         <th>Debit Amount</th>
-        <th>Credit Amount</th>
         <th>Days</th>
         <th>Pending</th>
       </tr>
@@ -39,8 +39,8 @@
           <td><%= entry.creditors %></td>
           <td><%= entry.date %></td>
           <td><%= entry.invoice_no %></td>
-          <td><%= entry.debit_amt ? entry.debit_amt : 0 %></td>
           <td><%= entry.credit_amt %></td>
+          <td><%= entry.debit_amt ? entry.debit_amt : 0 %></td>
           <td><%= daysBetweenToday(entry.date) %></td>
           <td><%= (entry.credit_amt - (entry.debit_amt ? entry.debit_amt : 0)).toFixed(2) %></td>
         </tr>
